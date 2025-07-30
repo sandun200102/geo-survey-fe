@@ -1,16 +1,18 @@
 import { motion } from "framer-motion";
 import Input from "../components/Input";
-import { Loader, Lock, Mail, User } from "lucide-react";
+import { Loader, Lock, Mail, User, PhoneCall, MapPinHouse } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import { useAuthStore } from "../store/authStore";
 
-
 const SignUpPage = () => {
-	const [name, setName] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [contactNumber, setContactNumber] = useState("");
+	const [address, setAddress] = useState("");
 	const navigate = useNavigate();
 
 	const { signup, error, isLoading } = useAuthStore();
@@ -19,7 +21,7 @@ const SignUpPage = () => {
 		e.preventDefault();
 
 		try {
-			await signup(email, password, name);
+			await signup(email, password, firstName, lastName, contactNumber, address);
 			navigate("/verify-email");
 		} catch (error) {
 			console.log(error);
@@ -42,9 +44,31 @@ const SignUpPage = () => {
 					<Input
 						icon={User}
 						type='text'
-						placeholder='Full Name'
-						value={name}
-						onChange={(e) => setName(e.target.value)}
+						placeholder='First Name'
+						value={firstName}
+						onChange={(e) => setFirstName(e.target.value)}
+					/>
+					<Input 
+						icon={User}
+						type='text'
+						placeholder='Last Name'
+						value={lastName}
+						onChange={(e) => setLastName(e.target.value)}
+					/>
+					
+					<Input
+						icon={PhoneCall}
+						type='text'
+						placeholder='Contact Number'
+						value={contactNumber}
+						onChange={(e) => setContactNumber(e.target.value)}
+					/>
+					<Input
+						icon={MapPinHouse}
+						type='text'
+						placeholder='Address'
+						value={address}
+						onChange={(e) => setAddress(e.target.value)}
 					/>
 					<Input
 						icon={Mail}

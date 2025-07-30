@@ -1,6 +1,7 @@
 // components/Avatar.jsx
 import React from "react";
 
+
 function stringToColor(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -10,9 +11,9 @@ function stringToColor(str) {
   return `hsl(${hue}, 70%, 50%)`;
 }
 
-const Avatar = ({ name, size = 40 }) => {
-  const initial = name?.charAt(0).toUpperCase() || "?";
-  const bgColor = stringToColor(name);
+const Avatar = ({ fname, lname, size = 40 }) => {
+  const initial = fname?.charAt(0).toUpperCase() + lname?.charAt(0).toUpperCase() || "?";
+  const bgColor = stringToColor(fname + lname);
 
   return (
     <div
@@ -23,7 +24,7 @@ const Avatar = ({ name, size = 40 }) => {
         fontSize: size * 0.5,
         backgroundColor: bgColor,
       }}
-      title={name}
+      title={fname + " " + lname}
     >
       {initial}
     </div>

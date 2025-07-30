@@ -4,10 +4,10 @@ import FloatingShape from "./components/FloatingShape";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
-import DashboardPage from "./pages/DashboardPage";
+import UserDashboardPage from "./pages/UserDashboardPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import AdminDashBoard from "./pages/AdminDashBoard";
+import AdminDashBoardPage from "./pages/AdminDashBoardPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
@@ -21,6 +21,7 @@ import Learn from "./pages/Learn";
 import Team from "./pages/Team";
 import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
+import Update from "./components/Update";
 
 
 
@@ -92,7 +93,7 @@ function App() {
 					path='/admin-dashboard'
 					element={
 						<ProtectedRoute>
-							<AdminDashBoard />
+							<AdminDashBoardPage />
 						</ProtectedRoute>
 					}
 				/>
@@ -100,7 +101,7 @@ function App() {
 					path='/user-dashboard'
 					element={
 						<ProtectedRoute>
-							<DashboardPage />
+							<UserDashboardPage />
 						</ProtectedRoute>
 					}
 				/>
@@ -170,6 +171,16 @@ function App() {
 				/>
 				
 
+				{/* <Route
+					path="/update"
+					element={
+						<ProtectedRoute>
+							<Update />
+						</ProtectedRoute>
+					}
+				/> */}
+				
+
 				<Route
 					path='/signup'
 					element={
@@ -207,7 +218,9 @@ function App() {
 				
 
 				
-				<Route path='/verify-email' element={<EmailVerificationPage />} />
+				<Route path='/verify-email' element={<div className='min-h-screen bg-gradient-to-br
+   							 from-blue-300 via-white to-blue-400 flex items-center justify-center relative overflow-hidden'
+							><EmailVerificationPage /></div>} />
 
 				<Route
 					path='/forgot-password'

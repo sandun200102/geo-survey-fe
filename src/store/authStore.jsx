@@ -7,26 +7,27 @@ const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/
 axios.defaults.withCredentials = true;
 
 export const useAuthStore = create((set) => ({
-	user: null,
+	 user: null,
 	isAuthenticated: false,
 	error: null,
 	isLoading: false,
 	isCheckingAuth: true,
 	message: null,
+	allUsers: [],
 
 	setAuthUser: (user) => set({ user, isAuthenticated: true }),
 
-
-	signup: async (email, password, name) => {
+	signup: async (email, password, firstName, lastName, contactNumber, address) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}/signup`, { email, password, name });
+			const response = await axios.post(`${API_URL}/signup`, { email, password, firstName, lastName, contactNumber, address });
 			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
 		} catch (error) {
 			set({ error: error.response.data.message || "Error signing up", isLoading: false });
 			throw error;
 		}
 	},
+	
 	login: async (email, password) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -41,6 +42,7 @@ export const useAuthStore = create((set) => ({
 			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
 			throw error;
 		}
+		console.log(API_URL)
 	},
 
 	logout: async () => {
@@ -53,6 +55,7 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
 	verifyEmail: async (code) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -64,6 +67,7 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
 	checkAuth: async () => {
 		set({ isCheckingAuth: true, error: null });
 		try {
@@ -73,6 +77,7 @@ export const useAuthStore = create((set) => ({
 			set({ error: null, isCheckingAuth: false, isAuthenticated: false });
 		}
 	},
+
 	forgotPassword: async (email) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -86,6 +91,7 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
 	resetPassword: async (token, password) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -99,4 +105,46 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
+	async removeUser(id) {
+		this.setLoading(true);
+		this.setError(null);
+		
+		try {
+		const response = await fetch(`${API_URL}/remove-user/${id}`, {
+			method: 'DELETE',
+			credentials: 'include',
+		});
+		
+		const data = await response.json();
+		
+		if (!response.ok) {
+			throw new Error(data.message || 'User removed failed');
+		}
+		
+		this.setMessage("User removed successfully");
+		return data;
+		} catch (error) {
+		this.setError(error.message || "User removed failed");
+		throw error;
+		} finally {
+		this.setLoading(false);
+		}
+	},
+
+	
+	getAllUsers: async () => {
+		try {
+			const response = await axios.get(`${API_URL}/get-users`, {
+			withCredentials: true,
+			});
+			return response.data.users;
+		} catch (error) {
+			console.error("Fetch all users failed:", error);
+			throw error;
+		}
+		}
+
+
 }));
+
