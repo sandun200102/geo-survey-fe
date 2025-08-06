@@ -1,9 +1,16 @@
-import React from 'react'
+import React from 'react';
+import NavBar from '../components/NavBar';
+
 
 function Booking() {
+
+
   return (
-    <div>Booking</div>
-  )
+    <>
+    <NavBar />
+  
+    </>
+  );
 }
 
-export default Booking
+export default Booking;

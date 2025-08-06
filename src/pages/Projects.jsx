@@ -1,8 +1,14 @@
 import React from 'react'
+import UploadImage from '../components/UploadImage';
+import NavBar from '../components/NavBar';
+
 
 function Projects() {
   return (
-    <div>Projects</div>
+    <div>
+      <NavBar />
+      <UploadImage />
+    </div>
   )
 }
 

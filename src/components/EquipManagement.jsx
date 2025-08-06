@@ -5,6 +5,8 @@ import {
   Filter, Search, User, Briefcase, Shield
 } from 'lucide-react';
 import equipmentStore from '../store/equipStore.jsx';
+import UploadImage from '../components/UploadImage';
+
 
 export default function EquipManagement() {
   // Local component state
@@ -235,7 +237,7 @@ export default function EquipManagement() {
               <Activity className="w-8 h-8 text-blue-400 mr-3" />
               <div>
                 <p className="text-white/60 text-sm">Total Value</p>
-                <p className="text-2xl font-bold text-white">${(equipmentStats.totalValue / 1000).toFixed(0)}K</p>
+                <p className="text-2xl font-bold text-white">Rs.{(equipmentStats.totalValue / 1000).toFixed(0)}K</p>
               </div>
             </div>
           </div>
@@ -256,16 +258,17 @@ export default function EquipManagement() {
             </div>
             
             <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-white/60" />
+              <Filter className="w-5 h-5 text-white" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                className="bg-white/10 border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
               >
                 <option value="All">All Status</option>
                 <option value="available">Available</option>
                 <option value="booked">Booked</option>
                 <option value="maintenance">Maintenance</option>
+               
               </select>
             </div>
           </div>
@@ -438,7 +441,7 @@ export default function EquipManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-white/70 text-sm mb-2">Value ($) *</label>
+                  <label className="block text-white/70 text-sm mb-2">Value (Rs.) *</label>
                   <input
                     name="value"
                     type="number"
@@ -448,6 +451,7 @@ export default function EquipManagement() {
                     className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
                   />
                 </div>
+               
               </div>
 
               <div>
@@ -461,6 +465,9 @@ export default function EquipManagement() {
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300 resize-none"
                 />
               </div>
+               <div className='w-full flex items-center justify-center'>
+                <UploadImage />
+                </div>
 
               <div className="flex space-x-4 pt-4">
                 <button
@@ -528,7 +535,7 @@ export default function EquipManagement() {
                 </div>
                 <div>
                   <p className="text-white/50 text-sm">Value</p>
-                  <p className="text-white font-medium">${viewingItem.value?.toLocaleString() || 'N/A'}</p>
+                  <p className="text-white font-medium">Rs.{viewingItem.value?.toLocaleString() || 'N/A'}</p>
                 </div>
               </div>
 

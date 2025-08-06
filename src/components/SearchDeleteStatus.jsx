@@ -164,7 +164,7 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+    <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -173,7 +173,7 @@ const UserManagement = () => {
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-8 border border-white/10 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             {/* Search */}
             <div className="relative flex-1">
@@ -183,14 +183,14 @@ const UserManagement = () => {
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border bg-white/10 text-white border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               <Filter className="w-4 h-4 mr-2" />
               Filters
@@ -199,16 +199,16 @@ const UserManagement = () => {
 
           {/* Filter Options */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200 text-white">
+            <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     User Status
                   </label>
                   <select
                     value={filters.status}
                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                    className="w-full p-2 border bg-white/10 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="all">All Users</option>
                     <option value="active">Active Users</option>
@@ -217,13 +217,13 @@ const UserManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Equipment Booking
                   </label>
                   <select
                     value={filters.equipmentBooked}
                     onChange={(e) => setFilters({ ...filters, equipmentBooked: e.target.value })}
-                    className="w-full bg-white/10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="all">All Users</option>
                     <option value="booked">Has Equipment Booked</option>
@@ -236,47 +236,47 @@ const UserManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 ">
-          <div className="p-4 rounded-lg shadow-sm border bg-black/30">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center">
               <Users className="w-8 h-8 text-blue-600" />
               <div className="ml-3">
-                <p className="text-sm font-medium text-white">Total Users</p>
-                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-sm font-medium text-gray-500">Total Users</p>
+                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
               </div>
             </div>
           </div>
-
-          <div className="bg-black/30 p-4 rounded-lg shadow-sm border">
+          
+          <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center">
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div className="ml-3">
-                <p className="text-sm font-medium text-white">Active Users</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm font-medium text-gray-500">Active Users</p>
+                <p className="text-2xl font-bold text-gray-900">
                   {users.filter(u => u.status === 'active').length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-black/30 p-4 rounded-lg shadow-sm border">
+          <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center">
               <XCircle className="w-8 h-8 text-red-600" />
               <div className="ml-3">
-                <p className="text-sm font-medium text-white">Suspended</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm font-medium text-gray-500">Suspended</p>
+                <p className="text-2xl font-bold text-gray-900">
                   {users.filter(u => u.status === 'suspended').length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-black/30 p-4 rounded-lg shadow-sm border">
+          <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center">
               <AlertCircle className="w-8 h-8 text-orange-600" />
               <div className="ml-3">
-                <p className="text-sm font-medium text-white">With Equipment</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm font-medium text-gray-500">With Equipment</p>
+                <p className="text-2xl font-bold text-gray-900">
                   {users.filter(u => u.hasEquipmentBooked).length}
                 </p>
               </div>
@@ -285,40 +285,40 @@ const UserManagement = () => {
         </div>
 
         {/* Users Table */}
-        <div className="bg-black/30 rounded-lg shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-gray-900">
               Users ({filteredUsers.length})
             </h2>
           </div>
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-black/20">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Equipment
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Last Login
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-white/5">
+                  <tr key={user._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -329,7 +329,7 @@ const UserManagement = () => {
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-white">
+                          <div className="text-sm font-medium text-gray-900">
                             {user.firstName} {user.lastName}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
@@ -381,21 +381,21 @@ const UserManagement = () => {
                         {user.status === 'active' ? (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'inactive')}
-                            className="bg-white/20 text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
+                            className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
                           >
                             Suspend
                           </button>
                         ) : (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'active')}
-                            className="text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50 bg-white/20"
+                            className="text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50"
                           >
                             Activate
                           </button>
                         )}
                         <button
                           onClick={() => handleRemoveUser(user._id)}
-                          className="bg-white/20 text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 flex items-center"
+                          className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 flex items-center"
                         >
                           <UserX className="w-4 h-4 mr-1" />
                           Remove

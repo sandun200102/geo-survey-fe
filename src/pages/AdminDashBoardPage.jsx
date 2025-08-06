@@ -3,6 +3,7 @@ import { User, Briefcase, Activity, Shield, ArchiveRestore, UserRoundPen, Archiv
 import NavBar from '../components/NavBar';
 import UserProfile from "../components/UserProfile"
 import EquipManagement from "../components/EquipManagement"
+import UserManagement from '../components/UserManagement';
 
 
 function AdminDashBoardPage() {
@@ -55,11 +56,9 @@ function AdminDashBoardPage() {
             Recent activity content goes here...
             </h2>
             </div>}
-        {activeTab === 'Users_Management' && <div>
-            <h2 className="text-xl font-semibold text-white">
-            Bookings content goes here...
-            </h2>
-            </div>}
+        {activeTab === 'Users_Management' && (
+            <UserManagement />
+        )}
       </div>
     </div>
     </div>
