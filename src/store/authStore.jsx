@@ -418,4 +418,35 @@ export const useAuthStore = create((set, get) => ({
 		message: null,
 		allUsers: [],
 	}),
+
+
+	sendContactEmail: async ( name, email, phone, company, projectType, message ) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.post(`${API_URL}/contact-email`, { name, email, phone, company, projectType, message });
+			set({ message: response.data.message, isLoading: false });
+		} catch (error) {
+			set({
+				isLoading: false,
+				error: error.response?.data?.message || "Error sending contact email",
+			});
+			throw error;
+		}
+	},
+
+	sendBookingEmail: async ( name, email ,phone, startDate, endDate, notes ) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.post(`${API_URL}/booking-email`, { name, email ,phone, startDate, endDate, notes });
+			set({ message: response.data.message, isLoading: false });
+		} catch (error) {
+			set({
+				isLoading: false,
+				error: error.response?.data?.message || "Error sending Booking Request email",
+			});
+			throw error;
+		}
+	}
+
+	
 }));

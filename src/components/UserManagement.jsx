@@ -77,8 +77,13 @@ const UserManagement = () => {
 
     setFilteredUsers(filtered);
   }, [users, searchTerm, filters]);
-
   const handleRemoveUser = async (userId) => {
+      const userToRemove = users.find(user => user._id === userId);
+     if (userToRemove.role === 'admin') {
+    alert("You cannot remove an admin user.");
+    return;
+  }
+
     if (window.confirm('Are you sure you want to remove this user?')) {
       try {
         await removeUser(userId);
@@ -93,6 +98,11 @@ const UserManagement = () => {
   };
 
   const handleStatusUpdate = async (userId, newStatus) => {
+    const userToRemove = users.find(user => user._id === userId);
+     if (userToRemove.role === 'admin') {
+    alert("You cannot handled admin user.");
+    return;
+  }
     try {
       await updateUserStatus(userId, newStatus);
       // Update local state immediately for better UX
@@ -144,7 +154,7 @@ const UserManagement = () => {
 
   if (error) {
     return (
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-10 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center">
@@ -165,7 +175,7 @@ const UserManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
@@ -265,7 +275,7 @@ const UserManagement = () => {
               <div className="ml-3">
                 <p className="text-sm font-medium text-white">Suspended</p>
                 <p className="text-2xl font-bold text-white">
-                  {users.filter(u => u.status === 'suspended').length}
+                  {users.filter(u => u.status === 'inactive').length}
                 </p>
               </div>
             </div>
@@ -378,28 +388,33 @@ const UserManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        {user.status === 'active' ? (
+                        {user.role !== 'admin' && user.status === 'active' ? (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'inactive')}
-                            className="bg-white/20 text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
+                            className="bg-white/20 text-green-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
                           >
                             Suspend
                           </button>
                         ) : (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'active')}
-                            className="text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50 bg-white/20"
-                          >
+                            className={`bg-white/20 text-red-600 px-2 py-1 rounded flex items-center ${
+                                user.role === 'admin'
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:text-red-900 hover:bg-red-50'
+                              }`}      >
                             Activate
                           </button>
                         )}
+                        
                         <button
                           onClick={() => handleRemoveUser(user._id)}
-                          className="bg-white/20 text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 flex items-center"
+                          className="bg-white/20 text-blue-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 flex items-center"
                         >
                           <UserX className="w-4 h-4 mr-1" />
                           Remove
                         </button>
+                        
                       </div>
                     </td>
                   </tr>

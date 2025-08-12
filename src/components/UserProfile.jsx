@@ -84,8 +84,8 @@ export default function UserProfile() {
               <div className="flex flex-wrap gap-4 text-sm text-white/80">
                 <div className="flex items-center"><Mail className="w-4 h-4 mr-2" />{primaryEmail}</div>
                 <div className="flex items-center"><Phone className="w-4 h-4 mr-2" />{contactNumber}</div>
-                <div className="flex items-center"><Calendar className="w-4 h-4 mr-2" />Joined {new Date(user.createdAt).toDateString()}</div>
-                <div className="flex items-center"><BadgeCheck className="w-4 h-4 mr-2" />{user.isVerified ? 'Verified' : 'Not Verified'}</div>
+                <div className="flex items-center"><Calendar className="w-4 h-4 mr-2" />Joined </div>
+                <div className="flex items-center"><BadgeCheck className="w-4 h-4 mr-2" /></div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6 text-center">

@@ -7,6 +7,7 @@ import Input from "../components/Input";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
@@ -17,7 +18,11 @@ const LoginPage = () => {
 	const handleLogin = async (e) => {
 		e.preventDefault();
 		try {
+			
 			await login(email, password);
+			
+			
+
 		} catch {
 			toast.error("Invalid credentials");
 		}

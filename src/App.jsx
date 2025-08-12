@@ -27,7 +27,7 @@ import Update from "./components/Update";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated, user } = useAuthStore();
+	const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
 
 	if (!isAuthenticated) {
 		return <Navigate to='/home' replace />;
@@ -35,6 +35,9 @@ const ProtectedRoute = ({ children }) => {
 
 	if (!user.isVerified) {
 		return <Navigate to='/verify-email' replace />;
+	}
+	if (isCheckingAuth) {
+		return <LoadingSpinner />;
 	}
 
 	return children;
@@ -45,9 +48,11 @@ const RedirectAuthenticatedUser = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
 
 	if (isAuthenticated && user.isVerified && user.role === "user") {
-		return <Navigate to='/' replace />;
+		console.log(isAuthenticated)
+		return <Navigate to='/user' replace />;
 	}
 	else if (isAuthenticated && user.isVerified && user.role === "admin") {
+	console.log(isAuthenticated)
 		return <Navigate to='/admin-dashboard' replace />;
 	}
 
@@ -109,9 +114,9 @@ function App() {
 				<Route
 					path='/equipments'
 					element={
-						<ProtectedRoute>
+						
 							<Equipments />
-						</ProtectedRoute>
+						
 					}
 				/>
 
@@ -127,18 +132,18 @@ function App() {
 				<Route
 					path='/learn'
 					element={
-						<ProtectedRoute>
+						
 							<Learn />
-						</ProtectedRoute>
+						
 					}
 				/>
 
 				<Route
 					path='/team-collaboration'
 					element={
-						<ProtectedRoute>
+						
 							<Team />
-						</ProtectedRoute>
+						
 					}
 				/>
 
@@ -146,18 +151,18 @@ function App() {
 				<Route
 					path='/field-support'
 					element={
-						<ProtectedRoute>
+						
 							<FieldSupport />
-						</ProtectedRoute>
+						
 					}
 				/>
 
 				<Route
 					path='/contact'
 					element={
-						<ProtectedRoute>
+						
 							<Contact />
-						</ProtectedRoute>
+						
 					}
 				/>
 
@@ -193,6 +198,7 @@ function App() {
 						</RedirectAuthenticatedUser>
 					}
 				/>
+				
 				
 				<Route
 					path='/home'

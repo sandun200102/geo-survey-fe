@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { 
   Edit3, Trash2, Plus, MapPin, Activity, Package, 
   AlertTriangle, CheckCircle, Clock, Eye, X, Save, 
-  Filter, Search, User, Briefcase, Shield
+  Filter, Search, User, Briefcase, Shield, Upload,
+  Camera
 } from 'lucide-react';
 import equipmentStore from '../store/equipStore.jsx';
-import UploadImage from '../components/UploadImage';
+import UploadImages from '../components/UploadImages';
 
 
 export default function EquipManagement() {
@@ -25,6 +26,10 @@ export default function EquipManagement() {
   const [viewingItem, setViewingItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  
+  // New state for image upload
+  const [uploadingItem, setUploadingItem] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Subscribe to store changes
   useEffect(() => {
@@ -66,6 +71,8 @@ export default function EquipManagement() {
       if (editingId) {
         // Update equipment
         await equipmentStore.updateEquipment(editingId, formData);
+        console.log("id====",editingId)
+        console.log("formdata====",formData)
       } else {
         // Add new equipment
         await equipmentStore.uploadEquipment(
@@ -120,6 +127,17 @@ export default function EquipManagement() {
     setShowForm(true);
   };
 
+  // New handler for image upload
+  const handleUploadImages = (item) => {
+    setUploadingItem(item);
+    setShowUploadModal(true);
+  };
+
+  const closeUploadModal = () => {
+    setUploadingItem(null);
+    setShowUploadModal(false);
+  };
+
   // Utility functions
   const getStatusIcon = (status) => {
     switch (status) {
@@ -137,9 +155,6 @@ export default function EquipManagement() {
       case 'maintenance': return 'bg-red-500/20 text-red-300 border-red-500/30';
       default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
-
-    const [activeTab, setActiveTab] = useState('profile');
-
   };
 
   // Get filtered data and stats from store
@@ -341,12 +356,20 @@ export default function EquipManagement() {
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => handleUploadImages(item)}
+                        className="p-2 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 rounded-lg transition-all duration-300"
+                        title="Upload Images"
+                      >
+                        <Camera className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDelete(item._id)}
                         className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
                         title="Delete Equipment"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
+                      
                     </div>
                   </div>
                 </div>
@@ -465,10 +488,7 @@ export default function EquipManagement() {
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300 resize-none"
                 />
               </div>
-               <div className='w-full flex items-center justify-center'>
-                <UploadImage />
-                </div>
-
+              
               <div className="flex space-x-4 pt-4">
                 <button
                   onClick={handleSubmit}
@@ -491,7 +511,9 @@ export default function EquipManagement() {
               </div>
             </div>
           </div>
+          
         </div>
+        
       )}
 
       {/* View Equipment Modal */}
@@ -550,10 +572,20 @@ export default function EquipManagement() {
                     setViewingItem(null);
                     handleEdit(viewingItem);
                   }}
-                  className="flex-1 flex items-center justify-center px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25"
+                  className="flex items-center justify-center px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25"
                 >
                   <Edit3 className="w-5 h-5 mr-2" />
                   Edit Equipment
+                </button>
+                <button
+                  onClick={() => {
+                    setViewingItem(null);
+                    handleUploadImages(viewingItem);
+                  }}
+                  className="flex items-center justify-center px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                >
+                  <Camera className="w-5 h-5 mr-2" />
+                  Upload Images
                 </button>
                 <button
                   onClick={() => setViewingItem(null)}
@@ -566,6 +598,46 @@ export default function EquipManagement() {
           </div>
         </div>
                 
+      )}
+
+      {/* Upload Images Modal */}
+      {showUploadModal && uploadingItem && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-4xl border border-white/20 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white">Upload Images</h2>
+                <p className="text-white/60 mt-1">
+                  Equipment: {uploadingItem.name} ({uploadingItem.equipmentId})
+                </p>
+              </div>
+              <button
+                onClick={closeUploadModal}
+                className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <UploadImages 
+                eqId={uploadingItem._id}
+                onUploadComplete={() => {  
+                  console.log('Images uploaded successfully for:', uploadingItem.name);
+                }}
+              />
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-white/10 mt-6">
+              <button
+                onClick={closeUploadModal}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 border border-white/20"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       
     </div>

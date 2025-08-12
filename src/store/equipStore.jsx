@@ -207,7 +207,40 @@ class EquipmentStore {
       return matchesSearch && matchesStatus;
     });
   }
+
+   // Update equipment
+  async updateEquipmentImageKey(id, imageData) {
+    this.setLoading(true);
+    this.setError(null);
+    
+    try {
+      const response = await fetch(`${API_URL}/equipment-image-key/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(imageData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Update failed');
+      }
+      
+      this.setMessage(data.message || 'Equipment image key updated successfully');
+      return data;
+    } catch (error) {
+      this.setError(error.message || "mage key update failed");
+      throw error;
+    } finally {
+      this.setLoading(false);
+    }
+  }
 }
+
+
 
 // Create and export a singleton instance
 const equipmentStore = new EquipmentStore();

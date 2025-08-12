@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import { useAuthStore } from "../store/authStore";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const SignUpPage = () => {
 	const [firstName, setFirstName] = useState("");
@@ -21,6 +22,7 @@ const SignUpPage = () => {
 		e.preventDefault();
 
 		try {
+			
 			await signup(email, password, firstName, lastName, contactNumber, address);
 			navigate("/verify-email");
 		} catch (error) {
