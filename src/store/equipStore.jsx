@@ -1,5 +1,3 @@
-import { create } from "zustand";
-import axios from "axios";
 
 // equipStore.js - Equipment API Store
 const API_URL = "http://localhost:5000/api/auth"; // Change this to your API URL
@@ -208,7 +206,7 @@ class EquipmentStore {
     });
   }
 
-   // Update equipment
+   // Update equipment image key
   async updateEquipmentImageKey(id, imageData) {
     this.setLoading(true);
     this.setError(null);
@@ -238,6 +236,9 @@ class EquipmentStore {
       this.setLoading(false);
     }
   }
+
+
+  
 }
 
 

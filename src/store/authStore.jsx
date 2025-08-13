@@ -271,6 +271,7 @@ export const useAuthStore = create((set, get) => ({
 			set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
 		} catch (error) {
 			set({ error: null, isCheckingAuth: false, isAuthenticated: false });
+			console.error("Authentication check failed:", error);
 		}
 	},
 
@@ -446,7 +447,35 @@ export const useAuthStore = create((set, get) => ({
 			});
 			throw error;
 		}
-	}
+	},
+
+	updatePermission: async (id, permission) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.patch(`${API_URL}/update-permission/${id}`, 
+				{ permission },
+				{ withCredentials: true }
+			);
+			
+			// Update user in local state
+			const currentUsers = get().allUsers;
+			const updatedUsers = currentUsers.map(user => 
+				user._id === id ? { ...user, permission } : user
+			);
+			
+			set({ 
+				allUsers: updatedUsers,
+				message: `Permission is updated to ${permission}`,
+				isLoading: false 
+			});
+			
+			return response.data;
+		} catch (error) {
+			const errorMessage = error.response?.data?.message || "Failed to update permission status";
+			set({ error: errorMessage, isLoading: false });
+			throw error;
+		}
+	},
 
 	
 }));

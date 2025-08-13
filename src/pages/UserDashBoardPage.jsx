@@ -5,11 +5,10 @@ import { useAuthStore } from '../store/authStore';
 import Avatar from '../components/Avtar';
 import axios from 'axios';
 import ForgotPassword from '../components/ForgotPassword';
-import { motion } from "framer-motion";
-import Input from "../components/Input";
+
 
 export default function UserDashBoard() {
-  const { user, logout, setAuthUser } = useAuthStore();
+  const { user,  setAuthUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [message, setMessage] = useState('');
 

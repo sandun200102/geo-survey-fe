@@ -30,7 +30,6 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     console.log(formData);
-    const email = "sandunms2001@gmail.com"
     await sendContactEmail(formData.name,formData.email,formData.phone,formData.company ,formData.projectType,formData.message)
     
     // Simulate API call

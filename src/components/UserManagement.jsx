@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, UserX, Users, Mail, Phone, MapPin, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { toast } from 'react-hot-toast';
 
 const UserManagement = () => {
   const { 
@@ -8,7 +9,9 @@ const UserManagement = () => {
     removeUser, 
     updateUserStatus, 
     isLoading, 
-    error 
+    error,
+    updatePermission,
+    
   } = useAuthStore();
 
   const [users, setUsers] = useState([]);
@@ -49,6 +52,7 @@ const UserManagement = () => {
       console.error('Error fetching users:', error);
     }
   };
+  
 
   // Filter and search users
   useEffect(() => {
@@ -113,6 +117,21 @@ const UserManagement = () => {
     } catch (error) {
       console.error('Error updating user status:', error);
       alert('Error updating user status: ' + error);
+    }
+  };
+
+    const handlePermission = async (userId, newPermission) => {  
+      
+    try {
+      await updatePermission(userId, newPermission);
+      // Update local state immediately for better UX
+      setUsers(users.map(user => 
+        user._id === userId ? { ...user, permission: newPermission } : user
+      ));
+      toast(`User status updated to ${newPermission}`);
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast('Error updating user status: ' + error);
     }
   };
 
@@ -316,6 +335,9 @@ const UserManagement = () => {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Permission
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                     Equipment
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
@@ -374,6 +396,16 @@ const UserManagement = () => {
                         </div>
                       )}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      
+    
+                        <div className="mt-1">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            { user.permission === 'pending' ? 'Pending' : user.permission  === 'accept' ? 'Accept' : 'null' }
+                          </span>
+                        </div>
+                      
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         user.hasEquipmentBooked 
@@ -414,6 +446,24 @@ const UserManagement = () => {
                           <UserX className="w-4 h-4 mr-1" />
                           Remove
                         </button>
+                          {user.role !== 'admin' && user.permission === 'pending' ? (
+                          <button
+                            onClick={() => handlePermission(user._id, 'accept')}
+                            className="bg-white/20 text-green-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
+                          >
+                            Accept
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handlePermission(user._id, 'null')}
+                            className={`bg-white/20 text-red-600 px-2 py-1 rounded flex items-center ${
+                                user.role === 'admin'
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:text-red-900 hover:bg-red-50'
+                              }`}      >
+                            pending
+                          </button>
+                        )}
                         
                       </div>
                     </td>

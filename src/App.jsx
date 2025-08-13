@@ -49,7 +49,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 
 	if (isAuthenticated && user.isVerified && user.role === "user") {
 		console.log(isAuthenticated)
-		return <Navigate to='/user' replace />;
+		return <Navigate to='/user-dashboard' replace />;
 	}
 	else if (isAuthenticated && user.isVerified && user.role === "admin") {
 	console.log(isAuthenticated)
@@ -60,7 +60,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 };
 
 function App() {
-	const { isCheckingAuth, checkAuth ,user } = useAuthStore();
+	const { isCheckingAuth, checkAuth  } = useAuthStore();
 
 	useEffect(() => {
 		checkAuth();
