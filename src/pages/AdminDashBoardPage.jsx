@@ -4,6 +4,7 @@ import NavBar from '../components/NavBar';
 import UserProfile from "../components/UserProfile"
 import EquipManagement from "../components/EquipManagement"
 import UserManagement from '../components/UserManagement';
+import BookingManagement from '../components/BookingManagement';
 
 
 function AdminDashBoardPage() {
@@ -52,9 +53,7 @@ function AdminDashBoardPage() {
         )
         }
         {activeTab === 'Bookings' && <div>
-            <h2 className="text-xl font-semibold text-white">
-            Recent activity content goes here...
-            </h2>
+            <BookingManagement />
             </div>}
         {activeTab === 'Users_Management' && (
             <UserManagement />

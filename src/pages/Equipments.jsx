@@ -5,13 +5,16 @@ import equipmentStore from '../store/equipStore.jsx';
 import GetOneImage from '../components/GetOneImage.jsx';
 import { useAuthStore } from '../store/authStore.jsx';
 import toast from "react-hot-toast";
+import useBookingStore from '../store/bookingStore';
 
 
 function Equipments() {
+    const { createBooking } = useBookingStore();
+    
   const [equipment, setEquipment] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [modalType, setModalType] = useState(null); // 'details' or 'hire'
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, sendBookingEmail} = useAuthStore();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -61,19 +64,16 @@ function Equipments() {
   };
 
   // Handle form submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const payload = {
-      ...formData,
-      equipmentId: selectedEquipment._id,
-      equipmentName: selectedEquipment.name
-    };
-
+  const handleSubmit = async () => {
+    
     // Print form details in console
     console.log("Form Data Submitted:", formData.name, formData.email ,formData.phone, formData.startDate, formData.endDate, formData.notes);
-
-
+    try{
+      await createBooking(selectedEquipment.name, selectedEquipment._id, user._id, formData.name, formData.email, formData.phone, formData.startDate, formData.email,selectedEquipment.value)
+    await sendBookingEmail(formData.name, formData.email, user._id, user.name, formData.email, formData.phone, formData.startDate, formData.endDate )
+    
+    }
+    catch(e){console.log(e)}
     // Reset & close modal after logging
     closeModal();
   };

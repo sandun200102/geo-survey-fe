@@ -16,6 +16,7 @@ export default function GeologicalNavbar() {
   const handleLogout = () => {
     logout();
   };
+  
 
   // Monitor screen size changes with better breakpoints
   useEffect(() => {

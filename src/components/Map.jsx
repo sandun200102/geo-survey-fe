@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import React from 'react';
 import { useAuthStore } from "../store/authStore";
+import 'leaflet/dist/leaflet.css';
 
 const locations = [
   { id: 1, name: "Colombo", lat: 6.9271, lng: 79.8612 },
@@ -9,7 +10,6 @@ const locations = [
 ];
 
 export default function Map() {
-  // Access user data from the auth store
   const { user, updatePermission, setAuthUser } = useAuthStore();
 
   const requestPermission = async (locationId) => {
@@ -21,63 +21,66 @@ export default function Map() {
     const permissionData = "pending";
     console.log(`Requesting permission for user: ${user._id} at location ID: ${locationId}`);
     await updatePermission(user._id, permissionData);
-    // Logic to handle permission request
-    console.log(`Permission requested for location ID: ${locationId}`);
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      {/* Permission Status Display */}
+    <div className="relative ">
+      {/* Permission Status Notification */}
       {user && user.permission === "pending" && (
-        <div style={{
-          position: 'absolute',
-          top: '10px',
-          left: '10px',
-          zIndex: 1000,
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffeaa7',
-          borderRadius: '4px',
-          padding: '10px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-        }}>
-          <h3 style={{ margin: '0', color: '#856404', fontSize: '16px' }}>
+        <div className="absolute top-3 left-12 items-center justify-center  z-50 bg-yellow-100 border border-yellow-300 rounded-lg p-3 shadow-md max-w-xs animate-pulse transition-all duration-500 ">
+          <h3 className="m-0 text-yellow-800 text-sm font-semibold flex items-center gap-1 z">
             ⏳ Permission Pending
           </h3>
-          <p style={{ margin: '5px 0 0 0', fontSize: '12px', color: '#856404' }}>
+          <p className="mt-1 text-xs text-yellow-800">
             Your location access request is being reviewed
           </p>
         </div>
       )}
-      
-      <MapContainer 
-        center={[7.8731, 80.7718]} 
-        zoom={7.3} 
-        style={{ height: '650px', width: '100%' }}
+
+      <MapContainer
+        center={[7.8731, 80.7718]}
+        zoom={7.3}
+        className="h-[650px] w-full border-2 z-0 border-gray-200 rounded-lg shadow-lg transition-shadow duration-500 hover:shadow-2xl"
       >
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {locations.map(loc => (
-          <Marker 
-            key={loc.id} 
-            position={[loc.lat, loc.lng]} 
-            icon={L.icon({ 
-              iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", 
-              iconSize: [30, 30] 
+          <Marker
+            key={loc.id}
+            position={[loc.lat, loc.lng]}
+            icon={L.icon({
+              iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+              iconSize: [35, 35],
+              iconAnchor: [17, 35],
+              popupAnchor: [0, -35]
             })}
           >
-            <Popup>
-              <b>{loc.name}</b><br />
-              {user && user.permission === "pending" ? (
-                <div style={{ color: '#856404', fontWeight: 'bold' }}>
-                  Permission Request Pending...
-                </div>
-              ) : (
-                <button onClick={() => requestPermission(loc.id)}>
-                  Request Permission
-                </button>
-              )}
+            {/* Popup opens on click by default */}
+            <Popup className="transition-all duration-300 transform hover:scale-105">
+              <div className="flex flex-col gap-2">
+                <p className="text-lg font-medium text-red-700">
+                  Click the button below to view projects and send a request....
+                </p>
+                <b className="text-gray-900">{loc.name}</b>
+                <span className="text-gray-500 text-xs">#{loc.id}</span>
+                {user && user.permission === "pending" && (
+                  <span className="text-yellow-800 font-semibold text-xs">
+                    (Permission Request Pending...)
+                  </span>
+                )}
+
+                {/* Show button only if permission not pending */}
+                {!(user && user.permission === "pending") && (
+                  <button
+                    className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                    onClick={() => requestPermission(loc.id)}
+                  >
+                    Request Permission
+                  </button>
+                )}
+              </div>
             </Popup>
           </Marker>
         ))}
