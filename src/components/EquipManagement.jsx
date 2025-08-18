@@ -31,6 +31,17 @@ export default function EquipManagement() {
   const [uploadingItem, setUploadingItem] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
+  // Confirmation dialog state
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationConfig, setConfirmationConfig] = useState({
+    title: '',
+    message: '',
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    onConfirm: () => {},
+    type: 'info' // 'info', 'warning', 'danger'
+  });
+
   // Subscribe to store changes
   useEffect(() => {
     const unsubscribe = equipmentStore.subscribe(setStoreState);
@@ -50,6 +61,24 @@ export default function EquipManagement() {
     }
   }, [storeState.message, storeState.error]);
 
+  // Confirmation dialog helper
+  const showConfirmDialog = (config) => {
+    setConfirmationConfig(config);
+    setShowConfirmation(true);
+  };
+
+  const closeConfirmDialog = () => {
+    setShowConfirmation(false);
+    setConfirmationConfig({
+      title: '',
+      message: '',
+      confirmText: 'Confirm',
+      cancelText: 'Cancel',
+      onConfirm: () => {},
+      type: 'info'
+    });
+  };
+
   // Form handlers
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -67,70 +96,138 @@ export default function EquipManagement() {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (editingId) {
-        // Update equipment
-        await equipmentStore.updateEquipment(editingId, formData);
-        console.log("id====",editingId)
-        console.log("formdata====",formData)
-      } else {
-        // Add new equipment
-        await equipmentStore.uploadEquipment(
+    const action = editingId ? 'update' : 'add';
+    const title = editingId ? 'Update Equipment' : 'Add Equipment';
+    const message = editingId 
+      ? `Are you sure you want to update "${formData.name}"?`
+      : `Are you sure you want to add "${formData.name}" to the inventory?`;
+
+    showConfirmDialog({
+      title,
+      message,
+      confirmText: editingId ? 'Update' : 'Add',
+      cancelText: 'Cancel',
+      type: 'info',
+      onConfirm: async () => {
+        try {
+          if (editingId) {
+            // Update equipment
+            await equipmentStore.updateEquipment(editingId, formData);
+            console.log("id====", editingId);
+            console.log("formdata====", formData);
+          } else {
+            // Add new equipment
+            await equipmentStore.uploadEquipment(
+              formData.name,
+              formData.category,
+              formData.status,
+              formData.location,
+              parseFloat(formData.value),
+              formData.description,
+              formData.equipmentId
+            );
+          }
           
-          formData.name,
-          formData.category,
-          formData.status,
-          formData.location,
-          parseFloat(formData.value),
-          formData.description,
-          formData.equipmentId
-          
-        );
+          resetForm();
+          // Refresh the equipment list
+          await equipmentStore.fetchEquipment();
+          closeConfirmDialog();
+        } catch (err) {
+          console.error("Error submitting form:", err);
+          closeConfirmDialog();
+        }
       }
-      
-      resetForm();
-      // Refresh the equipment list
-      await equipmentStore.fetchEquipment();
-    } catch (err) {
-      console.error("Error submitting form:", err);
-    }
+    });
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this equipment?")) {
-      try {
-        await equipmentStore.deleteEquipment(id);
-        // Refresh the equipment list
-        await equipmentStore.fetchEquipment();
-      } catch (err) {
-        console.error("Error deleting equipment:", err);
+  const handleDelete = async (item) => {
+    showConfirmDialog({
+      title: 'Delete Equipment',
+      message: `Are you sure you want to delete "${item.name}" (${item.equipmentId})? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          await equipmentStore.deleteEquipment(item._id);
+          // Refresh the equipment list
+          await equipmentStore.fetchEquipment();
+          closeConfirmDialog();
+        } catch (err) {
+          console.error("Error deleting equipment:", err);
+          closeConfirmDialog();
+        }
       }
-    }
+    });
   };
 
   const handleEdit = (item) => {
-    setFormData({
-      name: item.name,
-      category: item.category,
-      status: item.status,
-      location: item.location,
-      value: item.value.toString(),
-      description: item.description,
-      equipmentId: item.equipmentId,
+    showConfirmDialog({
+      title: 'Edit Equipment',
+      message: `Do you want to edit "${item.name}" (${item.equipmentId})?`,
+      confirmText: 'Edit',
+      cancelText: 'Cancel',
+      type: 'info',
+      onConfirm: () => {
+        setFormData({
+          name: item.name,
+          category: item.category,
+          status: item.status,
+          location: item.location,
+          value: item.value.toString(),
+          description: item.description,
+          equipmentId: item.equipmentId,
+        });
+        setEditingId(item._id);
+        setShowForm(true);
+        closeConfirmDialog();
+      }
     });
-    setEditingId(item._id);
-    setShowForm(true);
   };
 
   const handleAddNew = () => {
-    resetForm();
-    setShowForm(true);
+    showConfirmDialog({
+      title: 'Add New Equipment',
+      message: 'Do you want to add new equipment to the inventory?',
+      confirmText: 'Continue',
+      cancelText: 'Cancel',
+      type: 'info',
+      onConfirm: () => {
+        resetForm();
+        setShowForm(true);
+        closeConfirmDialog();
+      }
+    });
   };
 
-  // New handler for image upload
+  const handleViewDetails = (item) => {
+    showConfirmDialog({
+      title: 'View Equipment Details',
+      message: `Do you want to view details for "${item.name}" (${item.equipmentId})?`,
+      confirmText: 'View',
+      cancelText: 'Cancel',
+      type: 'info',
+      onConfirm: () => {
+        setViewingItem(item);
+        closeConfirmDialog();
+      }
+    });
+  };
+
+  // New handler for image upload with confirmation
   const handleUploadImages = (item) => {
-    setUploadingItem(item);
-    setShowUploadModal(true);
+    showConfirmDialog({
+      title: 'Upload Images',
+      message: `Do you want to upload images for "${item.name}" (${item.equipmentId})?`,
+      confirmText: 'Upload',
+      cancelText: 'Cancel',
+      type: 'info',
+      onConfirm: () => {
+        setUploadingItem(item);
+        setShowUploadModal(true);
+        closeConfirmDialog();
+      }
+    });
   };
 
   const closeUploadModal = () => {
@@ -154,6 +251,29 @@ export default function EquipManagement() {
       case 'booked': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
       case 'maintenance': return 'bg-red-500/20 text-red-300 border-red-500/30';
       default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+    }
+  };
+
+  const getConfirmationColors = (type) => {
+    switch (type) {
+      case 'danger':
+        return {
+          confirmBtn: 'bg-red-500 hover:bg-red-600 focus:ring-red-500',
+          icon: 'text-red-400',
+          border: 'border-red-500/30'
+        };
+      case 'warning':
+        return {
+          confirmBtn: 'bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500',
+          icon: 'text-yellow-400',
+          border: 'border-yellow-500/30'
+        };
+      default:
+        return {
+          confirmBtn: 'bg-emerald-500 hover:bg-emerald-600 focus:ring-emerald-500',
+          icon: 'text-emerald-400',
+          border: 'border-emerald-500/30'
+        };
     }
   };
 
@@ -315,7 +435,7 @@ export default function EquipManagement() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         {getStatusIcon(item.status)}
-                        <h3 className="text-lg font-semibold text-white">{item.name}</h3>
+                        <h3 className="text-lg font-semibold text-blue-600">{item.name}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(item.status)}`}>
                           {item.status}
                         </span>
@@ -323,17 +443,17 @@ export default function EquipManagement() {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-white/70">
                         <div>
-                          <span className="text-white/50">Category:</span> {item.category}
+                          <span className="text-red-600">Category:</span> {item.category}
                         </div>
                         <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-1" />
+                          <MapPin className="w-4 h-4 mr-1 text-amber-300" />
                           {item.location}
                         </div>
                         <div>
-                          <span className="text-white/50">ID:</span> {item.equipmentId}
+                          <span className="text-blue-300">ID:</span> {item.equipmentId}
                         </div>
                         <div>
-                          <span className="text-white/50">Value:</span> ${item.value?.toLocaleString() || 'N/A'}
+                          <span className="text-blue-400">Value:</span> ${item.value?.toLocaleString() || 'N/A'}
                         </div>
                       </div>
                       
@@ -342,7 +462,7 @@ export default function EquipManagement() {
                     
                     <div className="flex items-center space-x-2 ml-4">
                       <button
-                        onClick={() => setViewingItem(item)}
+                        onClick={() => handleViewDetails(item)}
                         className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-all duration-300"
                         title="View Details"
                       >
@@ -363,7 +483,7 @@ export default function EquipManagement() {
                         <Camera className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => handleDelete(item)}
                         className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
                         title="Delete Equipment"
                       >
@@ -379,12 +499,43 @@ export default function EquipManagement() {
         </div>
       </div>
 
+      {/* Confirmation Dialog */}
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md border border-white/20 shadow-2xl">
+            <div className="flex items-center space-x-3 mb-4">
+              {confirmationConfig.type === 'danger' && <AlertTriangle className={`w-6 h-6 ${getConfirmationColors(confirmationConfig.type).icon}`} />}
+              {confirmationConfig.type === 'warning' && <AlertTriangle className={`w-6 h-6 ${getConfirmationColors(confirmationConfig.type).icon}`} />}
+              {confirmationConfig.type === 'info' && <CheckCircle className={`w-6 h-6 ${getConfirmationColors(confirmationConfig.type).icon}`} />}
+              <h3 className="text-xl font-bold text-white">{confirmationConfig.title}</h3>
+            </div>
+            
+            <p className="text-white/70 mb-6">{confirmationConfig.message}</p>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={confirmationConfig.onConfirm}
+                className={`flex-1 px-4 py-2 text-white rounded-lg transition-all duration-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 ${getConfirmationColors(confirmationConfig.type).confirmBtn}`}
+              >
+                {confirmationConfig.confirmText}
+              </button>
+              <button
+                onClick={closeConfirmDialog}
+                className="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 border border-white/20"
+              >
+                {confirmationConfig.cancelText}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add/Edit Equipment Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-800 rounded-xl p-6 w-full max-w-2xl border border-white/20 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-green-600">
                 {editingId ? 'Update Equipment' : 'Add New Equipment'}
               </h2>
               <button
@@ -425,7 +576,7 @@ export default function EquipManagement() {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
                   >
                     <option value="">Select category</option>
                     <option value="Seismic Equipment">Seismic Equipment</option>
@@ -443,7 +594,7 @@ export default function EquipManagement() {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
                   >
                     <option value="">Select status</option>
                     <option value="available">available</option>
@@ -533,7 +684,7 @@ export default function EquipManagement() {
             <div className="space-y-6">
               <div className="flex items-center space-x-3">
                 {getStatusIcon(viewingItem.status)}
-                <h3 className="text-xl font-semibold text-white">{viewingItem.name}</h3>
+                <h3 className="text-xl font-semibold text-blue-600">{viewingItem.name}</h3>
                 <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(viewingItem.status)}`}>
                   {viewingItem.status}
                 </span>

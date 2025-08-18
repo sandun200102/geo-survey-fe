@@ -14,9 +14,11 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Loader
+  Loader,
+  AlertTriangle
 } from 'lucide-react';
 import useBookingStore from '../store/bookingStore';
+import Avatar from './Avtar';
 
 const BookingManagement = () => {
   const {
@@ -33,7 +35,9 @@ const BookingManagement = () => {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [newBooking, setNewBooking] = useState({
@@ -71,8 +75,26 @@ const BookingManagement = () => {
     }
   };
 
-  const handleStatusUpdate = async (bookingId, newStatus) => {
-    await updateBookingStatus(bookingId, { status: newStatus });
+  const showConfirmDialog = (booking, action, newStatus) => {
+    setSelectedBooking(booking);
+    setConfirmAction({ action, newStatus, bookingId: booking._id });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (confirmAction) {
+      await updateBookingStatus(confirmAction.bookingId, { status: confirmAction.newStatus });
+      setShowConfirmModal(false);
+      setConfirmAction(null);
+      if (showDetailsModal) {
+        setShowDetailsModal(false);
+      }
+    }
+  };
+
+  const handleCancelConfirm = () => {
+    setShowConfirmModal(false);
+    setConfirmAction(null);
   };
 
   const handleViewDetails = (booking) => {
@@ -97,6 +119,24 @@ const BookingManagement = () => {
       case 'completed': return <CheckCircle className="w-4 h-4" />;
       case 'cancelled': return <XCircle className="w-4 h-4" />;
       default: return <AlertCircle className="w-4 h-4" />;
+    }
+  };
+
+  const getActionText = (action) => {
+    switch (action) {
+      case 'confirm': return 'confirm this booking';
+      case 'cancel': return 'cancel this booking';
+      case 'complete': return 'mark this booking as completed';
+      default: return 'perform this action';
+    }
+  };
+
+  const getActionColor = (action) => {
+    switch (action) {
+      case 'confirm': return 'bg-green-600 hover:bg-green-700';
+      case 'cancel': return 'bg-red-600 hover:bg-red-700';
+      case 'complete': return 'bg-blue-600 hover:bg-blue-700';
+      default: return 'bg-gray-600 hover:bg-gray-700';
     }
   };
 
@@ -247,7 +287,7 @@ const BookingManagement = () => {
 
         {/* Loading */}
         {loading && (
-          <div className="bg-white p-8 rounded-lg shadow-sm border text-center">
+          <div className="bg-transparent p-8 rounded-lg shadow-sm border text-center">
             <Loader className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
             <p className="text-gray-600">Loading bookings...</p>
           </div>
@@ -291,16 +331,16 @@ const BookingManagement = () => {
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
                             <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <User className="w-5 h-5 text-gray-600" />
+                              <Avatar fname={booking.userName} lname={''} />
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{booking.userName}</div>
+                            <div className="text-sm font-medium text-gray-100">{booking.userName}</div>
                             <div className="text-sm text-gray-500">{booking.userEmail}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
                         <div className="flex items-center">
                           <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                           <div>
@@ -309,7 +349,7 @@ const BookingManagement = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
                         <div className="flex items-center">
                           <DollarSign className="w-4 h-4 mr-1 text-gray-400" />
                           {booking.amount}
@@ -333,13 +373,13 @@ const BookingManagement = () => {
                           {booking.status === 'pending' && (
                             <>
                               <button
-                                onClick={() => handleStatusUpdate(booking._id, 'confirmed')}
+                                onClick={() => showConfirmDialog(booking, 'confirm', 'confirmed')}
                                 className="text-green-600 hover:text-green-900 px-2 py-1 text-xs rounded"
                               >
                                 Confirm
                               </button>
                               <button
-                                onClick={() => handleStatusUpdate(booking._id, 'cancelled')}
+                                onClick={() => showConfirmDialog(booking, 'cancel', 'cancelled')}
                                 className="text-red-600 hover:text-red-900 px-2 py-1 text-xs rounded"
                               >
                                 Cancel
@@ -349,7 +389,7 @@ const BookingManagement = () => {
                           
                           {booking.status === 'confirmed' && (
                             <button
-                              onClick={() => handleStatusUpdate(booking._id, 'completed')}
+                              onClick={() => showConfirmDialog(booking, 'complete', 'completed')}
                               className="text-blue-600 hover:text-blue-900 px-2 py-1 text-xs rounded"
                             >
                               Complete
@@ -377,15 +417,71 @@ const BookingManagement = () => {
           </div>
         )}
 
+        {/* Confirmation Dialog */}
+        {showConfirmModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full">
+              <div className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0">
+                    <AlertTriangle className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-lg font-medium text-gray-900">Confirm Action</h3>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Are you sure you want to {getActionText(confirmAction?.action)}?
+                  </p>
+                  
+                  {selectedBooking && (
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="text-sm">
+                        <div className="font-medium text-gray-900">{selectedBooking.equipmentname}</div>
+                        <div className="text-gray-600">{selectedBooking.userName}</div>
+                        <div className="text-gray-500">{selectedBooking.userEmail}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCancelConfirm}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmAction}
+                    disabled={loading}
+                    className={`flex-1 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center ${getActionColor(confirmAction?.action)}`}
+                  >
+                    {loading ? (
+                      <Loader className="w-4 h-4 animate-spin" />
+                    ) : (
+                      'Confirm'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Create Booking Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-800 rounded-xl p-6 w-full max-w-2xl border border-white/20 max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold mb-4">Create New Booking</h2>
+                <h2 className="text-xl font-bold mb-4 text-green-600">Create New Booking</h2>
                 <form onSubmit={handleCreateBooking} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Equipment Name
                     </label>
                     <input
@@ -393,12 +489,12 @@ const BookingManagement = () => {
                       required
                       value={newBooking.equipmentname}
                       onChange={(e) => setNewBooking({...newBooking, equipmentname: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Equipment ID
                     </label>
                     <input
@@ -406,12 +502,12 @@ const BookingManagement = () => {
                       required
                       value={newBooking.equipmentId}
                       onChange={(e) => setNewBooking({...newBooking, equipmentId: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       User ID
                     </label>
                     <input
@@ -419,12 +515,12 @@ const BookingManagement = () => {
                       required
                       value={newBooking.userId}
                       onChange={(e) => setNewBooking({...newBooking, userId: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       User Name
                     </label>
                     <input
@@ -432,12 +528,12 @@ const BookingManagement = () => {
                       required
                       value={newBooking.userName}
                       onChange={(e) => setNewBooking({...newBooking, userName: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Email
                     </label>
                     <input
@@ -445,12 +541,12 @@ const BookingManagement = () => {
                       required
                       value={newBooking.userEmail}
                       onChange={(e) => setNewBooking({...newBooking, userEmail: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Phone
                     </label>
                     <input
@@ -458,13 +554,13 @@ const BookingManagement = () => {
                       required
                       value={newBooking.phone}
                       onChange={(e) => setNewBooking({...newBooking, phone: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white mb-1">
                         Start Date
                       </label>
                       <input
@@ -472,12 +568,12 @@ const BookingManagement = () => {
                         required
                         value={newBooking.startDate}
                         onChange={(e) => setNewBooking({...newBooking, startDate: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white mb-1">
                         End Date
                       </label>
                       <input
@@ -485,13 +581,13 @@ const BookingManagement = () => {
                         required
                         value={newBooking.endDate}
                         onChange={(e) => setNewBooking({...newBooking, endDate: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Amount
                     </label>
                     <input
@@ -500,7 +596,7 @@ const BookingManagement = () => {
                       required
                       value={newBooking.amount}
                       onChange={(e) => setNewBooking({...newBooking, amount: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full text-gray-400  px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
@@ -508,7 +604,7 @@ const BookingManagement = () => {
                     <button
                       type="button"
                       onClick={() => setShowCreateModal(false)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="flex-1 bg-green-500 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                     >
                       Cancel
                     </button>
@@ -528,14 +624,14 @@ const BookingManagement = () => {
 
         {/* Booking Details Modal */}
         {showDetailsModal && selectedBooking && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold">Booking Details</h2>
+                  <h2 className="text-xl font-bold text-green-700">Booking Details</h2>
                   <button
                     onClick={() => setShowDetailsModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-white hover:text-gray-600"
                   >
                     <XCircle className="w-6 h-6" />
                   </button>
@@ -554,47 +650,47 @@ const BookingManagement = () => {
                   </div>
 
                   {/* Equipment Information */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <div className="bg-white/30 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                       <Edit className="w-5 h-5 mr-2" />
                       Equipment Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600">Equipment Name</label>
+                        <label className="text-sm text-white">Equipment Name</label>
                         <p className="font-medium">{selectedBooking.equipmentname}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Equipment ID</label>
+                        <label className="text-sm text-white">Equipment ID</label>
                         <p className="font-medium">{selectedBooking.equipmentId}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Customer Information */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <div className="bg-white/30 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                       <User className="w-5 h-5 mr-2" />
                       Customer Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600">Name</label>
+                        <label className="text-sm text-white">Name</label>
                         <p className="font-medium">{selectedBooking.userName}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">User ID</label>
+                        <label className="text-sm text-white">User ID</label>
                         <p className="font-medium">{selectedBooking.userId}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600 flex items-center">
+                        <label className="text-sm text-white flex items-center">
                           <Mail className="w-4 h-4 mr-1" />
                           Email
                         </label>
                         <p className="font-medium">{selectedBooking.userEmail}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600 flex items-center">
+                        <label className="text-sm text-white flex items-center">
                           <Phone className="w-4 h-4 mr-1" />
                           Phone
                         </label>
@@ -604,35 +700,35 @@ const BookingManagement = () => {
                   </div>
 
                   {/* Booking Details */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <div className="bg-white/30 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                       <Calendar className="w-5 h-5 mr-2" />
                       Booking Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600">Start Date</label>
+                        <label className="text-sm text-white">Start Date</label>
                         <p className="font-medium">
                           {new Date(selectedBooking.startDate).toLocaleDateString()} at{' '}
                           {new Date(selectedBooking.startDate).toLocaleTimeString()}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">End Date</label>
+                        <label className="text-sm text-white">End Date</label>
                         <p className="font-medium">
                           {new Date(selectedBooking.endDate).toLocaleDateString()} at{' '}
                           {new Date(selectedBooking.endDate).toLocaleTimeString()}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600 flex items-center">
+                        <label className="text-sm text-white flex items-center">
                           <DollarSign className="w-4 h-4 mr-1" />
                           Amount
                         </label>
                         <p className="font-medium text-lg">${selectedBooking.amount}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Duration</label>
+                        <label className="text-sm text-white">Duration</label>
                         <p className="font-medium">
                           {Math.ceil((new Date(selectedBooking.endDate) - new Date(selectedBooking.startDate)) / (1000 * 60 * 60 * 24))} days
                         </p>
@@ -641,14 +737,14 @@ const BookingManagement = () => {
                   </div>
 
                   {/* Timestamps */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <div className="bg-white/30 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                       <Clock className="w-5 h-5 mr-2" />
                       Timestamps
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600">Created At</label>
+                        <label className="text-sm text-white">Created At</label>
                         <p className="font-medium">
                           {new Date(selectedBooking.createdAt).toLocaleDateString()} at{' '}
                           {new Date(selectedBooking.createdAt).toLocaleTimeString()}
@@ -656,7 +752,7 @@ const BookingManagement = () => {
                       </div>
                       {selectedBooking.updatedAt && selectedBooking.updatedAt !== selectedBooking.createdAt && (
                         <div>
-                          <label className="text-sm text-gray-600">Last Updated</label>
+                          <label className="text-sm text-white">Last Updated</label>
                           <p className="font-medium">
                             {new Date(selectedBooking.updatedAt).toLocaleDateString()} at{' '}
                             {new Date(selectedBooking.updatedAt).toLocaleTimeString()}
@@ -671,20 +767,14 @@ const BookingManagement = () => {
                     {selectedBooking.status === 'pending' && (
                       <>
                         <button
-                          onClick={() => {
-                            handleStatusUpdate(selectedBooking._id, 'confirmed');
-                            setShowDetailsModal(false);
-                          }}
+                          onClick={() => showConfirmDialog(selectedBooking, 'confirm', 'confirmed')}
                           className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
                           Confirm Booking
                         </button>
                         <button
-                          onClick={() => {
-                            handleStatusUpdate(selectedBooking._id, 'cancelled');
-                            setShowDetailsModal(false);
-                          }}
+                          onClick={() => showConfirmDialog(selectedBooking, 'cancel', 'cancelled')}
                           className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center justify-center"
                         >
                           <XCircle className="w-4 h-4 mr-2" />
@@ -695,10 +785,7 @@ const BookingManagement = () => {
                     
                     {selectedBooking.status === 'confirmed' && (
                       <button
-                        onClick={() => {
-                          handleStatusUpdate(selectedBooking._id, 'completed');
-                          setShowDetailsModal(false);
-                        }}
+                        onClick={() => showConfirmDialog(selectedBooking, 'complete', 'completed')}
                         className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
@@ -708,7 +795,7 @@ const BookingManagement = () => {
                     
                     <button
                       onClick={() => setShowDetailsModal(false)}
-                      className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="px-6 bg-green-500 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                     >
                       Close
                     </button>
