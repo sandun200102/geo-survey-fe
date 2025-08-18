@@ -193,12 +193,12 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+    <div className="min-h-screen bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
-          <p className="text-gray-600">Manage and monitor user accounts</p>
+          <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
+          <p className="text-gray-300">Manage and monitor user accounts</p>
         </div>
 
         {/* Search and Filter Bar */}
@@ -350,7 +350,7 @@ const UserManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-white/5">
+                  <tr key={user._id} className="hover:bg-gray-900">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">

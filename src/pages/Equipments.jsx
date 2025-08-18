@@ -66,11 +66,22 @@ function Equipments() {
   // Handle form submit
   const handleSubmit = async () => {
     
+    const newBooking = {
+        equipmentname: selectedEquipment.name,
+        equipmentId: selectedEquipment._id,
+        userId: user._id,
+        userName: formData.name,
+        userEmail: formData.email,
+        phone: formData.phone,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        amount: selectedEquipment.value
+    }
     // Print form details in console
     console.log("Form Data Submitted:", formData.name, formData.email ,formData.phone, formData.startDate, formData.endDate, formData.notes);
     try{
-      await createBooking(selectedEquipment.name, selectedEquipment._id, user._id, formData.name, formData.email, formData.phone, formData.startDate, formData.email,selectedEquipment.value)
-    await sendBookingEmail(formData.name, formData.email, user._id, user.name, formData.email, formData.phone, formData.startDate, formData.endDate )
+      await createBooking(newBooking)
+    await sendBookingEmail(formData.name, formData.email, formData.phone, formData.startDate, formData.endDate, formData.notes, selectedEquipment._id, selectedEquipment.name )
     
     }
     catch(e){console.log(e)}
@@ -79,7 +90,7 @@ function Equipments() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 ">
       <NavBar />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
         {equipment.map((item) => (

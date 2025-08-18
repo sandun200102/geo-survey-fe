@@ -162,7 +162,7 @@ export default function EquipManagement() {
   const equipmentStats = equipmentStore.getEquipmentStats();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">     
+    <div className="min-h-screen bg-transparent">     
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -175,7 +175,7 @@ export default function EquipManagement() {
           
           <button
             onClick={handleAddNew}
-            className="mt-4 md:mt-0 flex items-center px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105"
+            className="mt-4 md:mt-0 flex items-center px-6 py-3 bg-blue-500 hover:bg-emerald-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add Equipment
@@ -261,7 +261,7 @@ export default function EquipManagement() {
         {/* Search and Filter */}
         <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-white/10 mb-8">
           <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-            <div className="flex-1 relative">
+            <div className="flex-1 relative ">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
               <input
                 type="text"
@@ -272,12 +272,12 @@ export default function EquipManagement() {
               />
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-2 ">
+              <Filter className="w-5 h-5 text-white"  />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white/10 border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                className="bg-black/30 border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
               >
                 <option value="All">All Status</option>
                 <option value="available">Available</option>
@@ -310,7 +310,7 @@ export default function EquipManagement() {
               </div>
             ) : (
               filteredEquipment.map((item) => (
-                <div key={item._id} className="p-6 hover:bg-white/5 transition-all duration-300">
+                <div key={item._id} className="p-6 hover:bg-gray-900 transition-all duration-300">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
