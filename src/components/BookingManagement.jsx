@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import useBookingStore from '../store/bookingStore';
 import Avatar from './Avtar';
+import { useAuthStore } from '../store/authStore.jsx';
+
 
 const BookingManagement = () => {
   const {
@@ -32,6 +34,8 @@ const BookingManagement = () => {
     getBookingsByStatus,
     clearError
   } = useBookingStore();
+    const { updateUserBookingStatus} = useAuthStore();
+  
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -86,6 +90,17 @@ const BookingManagement = () => {
       await updateBookingStatus(confirmAction.bookingId, { status: confirmAction.newStatus });
       setShowConfirmModal(false);
       setConfirmAction(null);
+
+      if(confirmAction.newStatus === "confirmed"){
+        const hasEquipmentBooked = true
+        await updateUserBookingStatus(selectedBooking.userId, hasEquipmentBooked)
+        
+    }
+     else if(confirmAction.newStatus === "completed"){
+        const hasEquipmentBooked = false
+        await updateUserBookingStatus(selectedBooking.userId, hasEquipmentBooked)
+        
+    }
       if (showDetailsModal) {
         setShowDetailsModal(false);
       }

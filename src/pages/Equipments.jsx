@@ -14,7 +14,7 @@ function Equipments() {
   const [equipment, setEquipment] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [modalType, setModalType] = useState(null); // 'details' or 'hire'
-  const { user, isAuthenticated, sendBookingEmail} = useAuthStore();
+  const { user, isAuthenticated, sendBookingEmail, updateUserBookingStatus} = useAuthStore();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -78,11 +78,14 @@ function Equipments() {
         amount: selectedEquipment.value
     }
     // Print form details in console
-    console.log("Form Data Submitted:", formData.name, formData.email ,formData.phone, formData.startDate, formData.endDate, formData.notes);
+    console.log("Form Data Submitted:", user._id, formData.name, formData.email ,formData.phone, formData.startDate, formData.endDate, formData.notes);
     try{
+      const hasEquipmentBooked = true
+      
       await createBooking(newBooking)
-    await sendBookingEmail(formData.name, formData.email, formData.phone, formData.startDate, formData.endDate, formData.notes, selectedEquipment._id, selectedEquipment.name )
-    
+      await updateUserBookingStatus(user._id, hasEquipmentBooked)
+      await sendBookingEmail(formData.name, formData.email, formData.phone, formData.startDate, formData.endDate, formData.notes, selectedEquipment._id, selectedEquipment.name )
+      
     }
     catch(e){console.log(e)}
     // Reset & close modal after logging

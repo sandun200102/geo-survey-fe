@@ -22,12 +22,28 @@ import Team from "./pages/Team";
 import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
 import Update from "./components/Update";
+import { useTimeAgo } from "./utils/useTimeAgo";
+
 
 
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
+	const { isAuthenticated, user, isCheckingAuth, logout } = useAuthStore();
+
+	if (isCheckingAuth) {
+		return <LoadingSpinner />;
+	}
+	if (user?.lastLogin) {
+    const diff = useTimeAgo(user.lastLogin);
+
+    // Example: if logged in more than 40 minutes ago → force re-login
+    if (diff.minutes > 40) {
+      console.log("Authentication expired, redirecting to login...");
+	  logout()
+      
+    }
+  }
 
 	if (!isAuthenticated) {
 		return <Navigate to='/home' replace />;
@@ -36,9 +52,7 @@ const ProtectedRoute = ({ children }) => {
 	if (!user.isVerified) {
 		return <Navigate to='/verify-email' replace />;
 	}
-	if (isCheckingAuth) {
-		return <LoadingSpinner />;
-	}
+	
 
 	return children;
 };
@@ -46,6 +60,7 @@ const ProtectedRoute = ({ children }) => {
 // redirect authenticated users to the home page
 const RedirectAuthenticatedUser = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
+
 
 	if (isAuthenticated && user.isVerified && user.role === "user") {
 		console.log(isAuthenticated)

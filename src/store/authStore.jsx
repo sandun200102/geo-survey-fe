@@ -267,6 +267,8 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
+	
+
 
 	// Sending Emails---------------------------------------------------------
 
@@ -340,6 +342,41 @@ export const useAuthStore = create((set, get) => ({
 			throw error;
 		}
 	},
+
+	updateUserBookingStatus: async (id, hasEquipmentBooked) => {
+  set({ isLoading: true, error: null });
+  try {
+    const response = await axios.patch(
+      `${API_URL}/update-user-booking-status/${id}`,
+      { hasEquipmentBooked: Boolean(hasEquipmentBooked) }, 
+      { 
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" }
+      }
+    );
+
+    // Update user in local state
+    const currentUsers = get().allUsers;
+    const updatedUsers = currentUsers.map(user =>
+      user._id === id ? { ...user, hasEquipmentBooked: Boolean(hasEquipmentBooked) } : user
+    );
+
+    set({
+      allUsers: updatedUsers,
+      message: `User booking status updated to ${hasEquipmentBooked}`,
+      isLoading: false
+    });
+
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Failed to update user booking status";
+    set({ error: errorMessage, isLoading: false });
+    throw error;
+  }
+    },
+
+
 
 	
 }));

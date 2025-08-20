@@ -123,7 +123,7 @@ const useBookingStore = create((set, get) => ({
   updateBookingStatus: async (bookingId, updateData) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`${API_BASE_URL}/update-booking-staus/${bookingId}`, {
+      const response = await fetch(`${API_BASE_URL}/update-booking-status/${bookingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
