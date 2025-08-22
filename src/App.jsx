@@ -40,7 +40,9 @@ const ProtectedRoute = ({ children }) => {
     // Example: if logged in more than 40 minutes ago → force re-login
     if (diff.minutes > 40) {
       console.log("Authentication expired, redirecting to login...");
+	//   toast.success("Authentication expired !");
 	  logout()
+	  
       
     }
   }
@@ -168,7 +170,7 @@ function App() {
 					element={
 						
 							<FieldSupport />
-						
+
 					}
 				/>
 

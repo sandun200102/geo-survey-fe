@@ -267,10 +267,8 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
-	
 
-
-	// Sending Emails---------------------------------------------------------
+// Sending Emails---------------------------------------------------------
 
 	sendContactEmail: async ( name, email, phone, company, projectType, message ) => {
 		set({ isLoading: true, error: null });
