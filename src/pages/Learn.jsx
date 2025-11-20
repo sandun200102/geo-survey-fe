@@ -1,12 +1,13 @@
 import React from 'react'
 import NavBar from '../components/NavBar';
+import AdminPanel from './AdminPanel';
 
 
 function Learn() {
   return (
     <div>
       <NavBar />
-      <h1>Learn</h1>
+      <AdminPanel />
     </div>
   )
 }

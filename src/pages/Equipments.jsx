@@ -64,33 +64,47 @@ function Equipments() {
   };
 
   // Handle form submit
-  const handleSubmit = async () => {
-    
-    const newBooking = {
-        equipmentname: selectedEquipment.name,
-        equipmentId: selectedEquipment._id,
-        userId: user._id,
-        userName: formData.name,
-        userEmail: formData.email,
-        phone: formData.phone,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        amount: selectedEquipment.value
-    }
-    // Print form details in console
-    console.log("Form Data Submitted:", user._id, formData.name, formData.email ,formData.phone, formData.startDate, formData.endDate, formData.notes);
-    try{
-      const hasEquipmentBooked = true
-      
-      await createBooking(newBooking)
-      await updateUserBookingStatus(user._id, hasEquipmentBooked)
-      await sendBookingEmail(formData.name, formData.email, formData.phone, formData.startDate, formData.endDate, formData.notes, selectedEquipment._id, selectedEquipment.name )
-      
-    }
-    catch(e){console.log(e)}
-    // Reset & close modal after logging
-    closeModal();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  console.log("HANDLE SUBMIT TRIGGERED");
+
+  const newBooking = {
+    equipmentname: selectedEquipment.name,
+    equipmentId: selectedEquipment._id,
+    userId: user._id,
+    userName: formData.name,
+    userEmail: formData.email,
+    phone: formData.phone,
+    startDate: formData.startDate,
+    endDate: formData.endDate,
+    amount: selectedEquipment.value
   };
+
+  try {
+    await createBooking(newBooking);
+
+    await updateUserBookingStatus(user._id, true);
+
+    await sendBookingEmail(
+      formData.name,
+      formData.email,
+      formData.phone,
+      formData.startDate,
+      formData.endDate,
+      formData.notes,
+      selectedEquipment._id,
+      selectedEquipment.name
+    );
+
+    console.log("Booking created and email sent");
+    closeModal();
+  } catch (err) {
+    console.log("Error during submit:", err);
+    toast.error("Failed to process request");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 ">

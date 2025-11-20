@@ -165,7 +165,7 @@ export default function GeologicalNavbar() {
               to="/booking"
               className={`text-black/80 hover:text-white ${sizeClasses.padding} ${sizeClasses.navText} font-medium transition-all duration-300 relative group whitespace-nowrap`}
             >
-              Booking
+              LMS
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 group-hover:w-full transition-all duration-300"></span>
             </Link>
             <Link
@@ -329,7 +329,7 @@ export default function GeologicalNavbar() {
               className=" text-white/80 font-bold hover:text-white py-2 px-3 rounded-lg transition-all duration-300 hover:bg-white/10 hover:translate-x-2 transform flex items-center justify-center relative overflow-hidden border-amber-100"
               onClick={() => setIsMenuOpen(false)}
             >
-              Booking
+              LMS
             </Link>
             </div>
             <div className="pt-4 border-t border-white/20">

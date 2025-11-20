@@ -82,7 +82,7 @@ export default function GeologicalSurveyHomePage() {
           </div>
 
           {/* Stats - Mobile Responsive Grid */}
-          <div className="grid grid-cols-1 xs:grid-cols-3 gap-4 sm:gap-8 max-w-sm xs:max-w-2xl mx-auto">
+          {/* <div className="grid grid-cols-1 xs:grid-cols-3 gap-4 sm:gap-8 max-w-sm xs:max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">500+</div>
               <div className="text-sm sm:text-base text-white/60">Active Projects</div>
@@ -95,7 +95,7 @@ export default function GeologicalSurveyHomePage() {
               <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">24/7</div>
               <div className="text-sm sm:text-base text-white/60">Field Support</div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Scroll Indicator - Hidden on very small screens */}

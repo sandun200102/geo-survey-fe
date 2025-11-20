@@ -272,6 +272,8 @@ export const useAuthStore = create((set, get) => ({
 
 	sendContactEmail: async ( name, email, phone, company, projectType, message ) => {
 		set({ isLoading: true, error: null });
+				console.log("frontend wda")
+
 		try {
 			const response = await axios.post(`${API_URL}/contact-email`, { name, email, phone, company, projectType, message });
 			set({ message: response.data.message, isLoading: false });
@@ -286,6 +288,10 @@ export const useAuthStore = create((set, get) => ({
 
 	sendBookingEmail: async ( name, email ,phone, startDate, endDate, notes, equipmentId, equipmentName ) => {
 		set({ isLoading: true, error: null });
+		console.log(name)
+		console.log(email)
+		console.log(phone)
+		console.log(notes)
 		try {
 			const response = await axios.post(`${API_URL}/booking-email`, { name, email ,phone, startDate, endDate, notes,equipmentId, equipmentName });
 			set({ message: response.data.message, isLoading: false });
@@ -308,14 +314,16 @@ export const useAuthStore = create((set, get) => ({
 				isLoading: false,
 				error: error.response?.data?.message || "Error sending Permission Request email",
 			});
-			throw error;
+			throw error;                                                                                                                       
+
+
 		}
 	},
 
-	sendPermissionEmailToUser: async ( name, email, token, projectName  ) => {
+	sendPermissionEmailToUser: async ( name, email, projectName  ) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}/permission-email-to-user`, { name, email, token, projectName });
+			const response = await axios.post(`${API_URL}/permission-email-to-user`, { name, email, projectName });
 			set({ message: response.data.message, isLoading: false });
 		} catch (error) {
 			set({
@@ -326,8 +334,7 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
-
-	sendBookingCOnfirmedEmail: async ( name, email ,phone, startDate, endDate, notes, equipmentId, equipmentName ) => {
+	sendBookingConfirmedEmail: async ( name, email ,phone, startDate, endDate, notes, equipmentId, equipmentName ) => {
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.post(`${API_URL}/booking-confirmed-email`, { name, email ,phone, startDate, endDate, notes,equipmentId, equipmentName  });
@@ -373,8 +380,6 @@ export const useAuthStore = create((set, get) => ({
     throw error;
   }
     },
-
-
 
 	
 }));
