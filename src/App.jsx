@@ -23,6 +23,7 @@ import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
 import Update from "./components/Update";
 import { useTimeAgo } from "./utils/useTimeAgo";
+import AdminPanel from "./pages/AdminPanel";	
 
 
 
@@ -70,7 +71,8 @@ const RedirectAuthenticatedUser = ({ children }) => {
 	}
 	else if (isAuthenticated && user.isVerified && user.role === "admin") {
 	console.log(isAuthenticated)
-		return <Navigate to='/admin-dashboard' replace />;
+		// return <Navigate to='/admin-dashboard' replace />;
+		return <Navigate to='/admin-panel' replace />;
 	}
 
 	return children;
@@ -119,6 +121,16 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				<Route
+					path='/admin-panel'
+					element={
+						<ProtectedRoute>
+							<AdminPanel />
+						</ProtectedRoute>
+					}
+				/>
+
 				<Route
 					path='/user-dashboard'
 					element={

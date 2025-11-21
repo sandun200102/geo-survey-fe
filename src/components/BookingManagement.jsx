@@ -186,7 +186,7 @@ const BookingManagement = () => {
 
   return (
     <div className="min-h-screen bg-transparent ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Booking Management</h1>
@@ -321,12 +321,12 @@ const BookingManagement = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
                       Dates
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
+                    </th> */}
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
                       Amount
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
                       Status
                     </th>
@@ -339,7 +339,7 @@ const BookingManagement = () => {
                   {filteredBookings.map((booking) => (
                     <tr key={booking._id} className="hover:bg-gray-900">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-300">{booking.equipmentname}</div>
+                        <div className="text-xs text-gray-300">{booking.equipmentname}</div>
                         <div className="text-sm text-gray-400">ID: {booking.equipmentId}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -355,7 +355,7 @@ const BookingManagement = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
                         <div className="flex items-center">
                           <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                           <div>
@@ -363,13 +363,13 @@ const BookingManagement = () => {
                             <div className="text-gray-500">to {new Date(booking.endDate).toLocaleDateString()}</div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
+                      </td> */}
+                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-100">
                         <div className="flex items-center">
                           <DollarSign className="w-4 h-4 mr-1 text-gray-400" />
                           {booking.amount}
                         </div>
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
                           {getStatusIcon(booking.status)}

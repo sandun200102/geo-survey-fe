@@ -43,7 +43,7 @@ export default function GeologicalNavbar() {
   // Determine dashboard route based on role
   const dashboardRoute =
     user?.role === 'admin'
-      ? '/admin-dashboard'
+      ? '/admin-panel'
       : user?.role === 'user'
       ? '/user-dashboard'
       : '/';

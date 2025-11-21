@@ -6,7 +6,7 @@ import AdminPanel from './AdminPanel';
 function Learn() {
   return (
     <div>
-      <NavBar />
+      {/* <NavBar /> */}
       <AdminPanel />
     </div>
   )

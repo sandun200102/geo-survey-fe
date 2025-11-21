@@ -330,7 +330,7 @@ const UserManagement = () => {
   if (error) {
     return (
       <div className="p-10 bg-gray-50 min-h-screen">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center">
               <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
@@ -350,7 +350,7 @@ const UserManagement = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
@@ -490,9 +490,9 @@ const UserManagement = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Permission
-                  </th>
+                  </th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Equipment
                   </th>
@@ -633,6 +633,8 @@ const UserManagement = () => {
               </tbody>
             </table>
           </div>
+
+          
 
           {filteredUsers.length === 0 && (
             <div className="text-center py-12">

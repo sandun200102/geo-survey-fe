@@ -282,12 +282,12 @@ export default function EquipManagement() {
   const equipmentStats = equipmentStore.getEquipmentStats();
 
   return (
-    <div className="min-h-screen bg-transparent">     
+    <div className="min-h-screen bg-white-500 text-white p-8">     
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold gradiant-to-r from-green-100 to-green-800 bg-clip-text ">
               Equipment Management
             </h1>
             <p className="text-white/60 mt-2">Manage geological survey equipment and assets</p>

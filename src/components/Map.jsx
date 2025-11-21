@@ -13,22 +13,27 @@ export default function Map() {
   const { user, updatePermission, setAuthUser } = useAuthStore();
 
   const requestPermission = async (locationId) => {
-    setAuthUser(user);
     if (!user) {
       alert("Please log in to request permission.");
       return;
     }
+
     const permissionData = "pending";
     console.log(`Requesting permission for user: ${user._id} at location ID: ${locationId}`);
+
+    // Call the API/store update
     await updatePermission(user._id, permissionData);
+
+    // Update the local user state to reflect the new permission
+    setAuthUser({ ...user, permission: permissionData });
   };
 
   return (
-    <div className="relative ">
+    <div className="relative">
       {/* Permission Status Notification */}
       {user && user.permission === "pending" && (
-        <div className="absolute top-3 left-12 items-center justify-center  z-50 bg-yellow-100 border border-yellow-300 rounded-lg p-3 shadow-md max-w-xs animate-pulse transition-all duration-500 ">
-          <h3 className="m-0 text-yellow-800 text-sm font-semibold flex items-center gap-1 z">
+        <div className="absolute top-3 left-12 items-center justify-center z-50 bg-yellow-100 border border-yellow-300 rounded-lg p-3 shadow-md max-w-xs animate-pulse transition-all duration-500">
+          <h3 className="m-0 text-yellow-800 text-sm font-semibold flex items-center gap-1">
             ⏳ Permission Pending
           </h3>
           <p className="mt-1 text-xs text-yellow-800">
@@ -57,7 +62,6 @@ export default function Map() {
               popupAnchor: [0, -35]
             })}
           >
-            {/* Popup opens on click by default */}
             <Popup className="transition-all duration-300 transform hover:scale-105">
               <div className="flex flex-col gap-2">
                 <p className="text-lg font-medium text-red-700">
@@ -65,6 +69,7 @@ export default function Map() {
                 </p>
                 <b className="text-gray-900">{loc.name}</b>
                 <span className="text-gray-500 text-xs">#{loc.id}</span>
+
                 {user && user.permission === "pending" && (
                   <span className="text-yellow-800 font-semibold text-xs">
                     (Permission Request Pending...)
