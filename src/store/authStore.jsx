@@ -267,6 +267,34 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
+	updateAdmin: async (id, role) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.patch(`${API_URL}/update-role/${id}`, 
+				{ role },
+				{ withCredentials: true }
+			);
+			
+			// Update user in local state
+			const currentUsers = get().allUsers;
+			const updatedUsers = currentUsers.map(user => 
+				user._id === id ? { ...user, role } : user
+			);
+			
+			set({ 
+				allUsers: updatedUsers,
+				message: `User status updated to ${role}`,
+				isLoading: false 
+			});
+			
+			return response.data;
+		} catch (error) {
+			const errorMessage = error.response?.data?.message || "Failed to update to admin status";
+			set({ error: errorMessage, isLoading: false });
+			throw error;
+		}
+	},
+
 
 // Sending Emails---------------------------------------------------------
 

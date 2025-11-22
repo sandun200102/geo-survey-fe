@@ -23,7 +23,9 @@ import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
 import Update from "./components/Update";
 import { useTimeAgo } from "./utils/useTimeAgo";
+import SuperAdminPanel from "./pages/SuperAdminPanel";	
 import AdminPanel from "./pages/AdminPanel";	
+
 
 
 
@@ -68,6 +70,11 @@ const RedirectAuthenticatedUser = ({ children }) => {
 	if (isAuthenticated && user.isVerified && user.role === "user") {
 		console.log(isAuthenticated)
 		return <Navigate to='/user-dashboard' replace />;
+	}
+	else if (isAuthenticated && user.isVerified && user.role === "super-admin") {
+	console.log(isAuthenticated)
+		// return <Navigate to='/admin-dashboard' replace />;
+		return <Navigate to='/super-admin-panel' replace />;
 	}
 	else if (isAuthenticated && user.isVerified && user.role === "admin") {
 	console.log(isAuthenticated)
@@ -127,6 +134,15 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<AdminPanel />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path='/super-admin-panel'
+					element={
+						<ProtectedRoute>
+							<SuperAdminPanel />
 						</ProtectedRoute>
 					}
 				/>

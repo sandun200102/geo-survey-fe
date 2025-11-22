@@ -372,7 +372,7 @@ export default function EquipManagement() {
               <Activity className="w-8 h-8 text-blue-400 mr-3" />
               <div>
                 <p className="text-white/60 text-sm">Total Value</p>
-                <p className="text-2xl font-bold text-white">Rs.{(equipmentStats.totalValue / 1000).toFixed(0)}K</p>
+                <p className="text-2xl font-bold text-white">Rs.{(equipmentStats.totalValue).toFixed(0)}</p>
               </div>
             </div>
           </div>

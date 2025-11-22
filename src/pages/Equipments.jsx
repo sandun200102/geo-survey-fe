@@ -85,6 +85,7 @@ function Equipments() {
     await createBooking(newBooking);
 
     await updateUserBookingStatus(user._id, true);
+    await equipmentStore.updateEquipment(selectedEquipment._id, { status: 'pending' });
 
     await sendBookingEmail(
       formData.name,

@@ -90,6 +90,7 @@ const UserManagement = () => {
     isLoading, 
     error,
     updatePermission,
+    user: currentUser
   } = useAuthStore();
 
   const [users, setUsers] = useState([]);
@@ -226,70 +227,72 @@ const UserManagement = () => {
   };
 
   const handleRemoveUser = (userId) => {
-    const userToRemove = users.find(user => user._id === userId);
-    
-    if (userToRemove.role === 'admin') {
-      toast.error("You cannot remove an admin user.");
-      return;
-    }
+  const userToRemove = users.find(u => u._id === userId);
 
-    openDialog({
-      type: 'danger',
-      title: 'Remove User',
-      message: `Are you sure you want to remove ${userToRemove.firstName} ${userToRemove.lastName}? This action cannot be undone.`,
-      confirmText: 'Remove',
-      cancelText: 'Cancel',
-      actionType: 'removeUser',
-      userId: userId,
-      userData: { user: userToRemove }
-    });
-  };
+  // Admin can remove ONLY normal users
+  if (currentUser.role === 'admin' && userToRemove.role !== 'user') {
+    toast.error("Admin can only remove users, not other admins or super-admin.");
+    return;
+  }
+
+  // Super admin can remove anyone (no restriction)
+
+  openDialog({
+    type: 'danger',
+    title: 'Remove User',
+    message: `Are you sure you want to remove ${userToRemove.firstName} ${userToRemove.lastName}?`,
+    confirmText: 'Remove',
+    actionType: 'removeUser',
+    userId,
+  });
+};
+
 
   const handleStatusUpdate = (userId, newStatus) => {
-    const userToUpdate = users.find(user => user._id === userId);
-    
-    if (userToUpdate.role === 'admin') {
-      toast.error("You cannot modify admin user status.");
-      return;
-    }
+  const target = users.find(u => u._id === userId);
 
-    const actionText = newStatus === 'active' ? 'activate' : 'suspend';
-    const statusText = newStatus === 'active' ? 'activated' : 'suspended';
+  // Admin can suspend/activate ONLY normal users
+  if (currentUser.role === 'admin' && target.role !== 'user') {
+    toast.error("Admin can only change status of normal users.");
+    return;
+  }
 
-    openDialog({
-      type: newStatus === 'active' ? 'success' : 'warning',
-      title: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} User`,
-      message: `Are you sure you want to ${actionText} ${userToUpdate.firstName} ${userToUpdate.lastName}? They will be ${statusText}.`,
-      confirmText: actionText.charAt(0).toUpperCase() + actionText.slice(1),
-      cancelText: 'Cancel',
-      actionType: 'updateStatus',
-      userId: userId,
-      userData: { newStatus, user: userToUpdate }
-    });
-  };
+  // Super-admin can change anyone's status
+
+  openDialog({
+    type: newStatus === 'active' ? 'success' : 'warning',
+    title: `${newStatus === 'active' ? 'Activate' : 'Suspend'} User`,
+    message: `Are you sure you want to change ${target.firstName} ${target.lastName}'s status?`,
+    confirmText: newStatus === 'active' ? 'Activate' : 'Suspend',
+    actionType: 'updateStatus',
+    userId,
+    userData: { newStatus }
+  });
+};
+
 
   const handlePermission = (userId, newPermission) => {
-    const userToUpdate = users.find(user => user._id === userId);
-    
-    if (userToUpdate.role === 'admin') {
-      toast.error("You cannot modify admin user permissions.");
-      return;
-    }
+  const target = users.find(u => u._id === userId);
 
-    const permissionText = newPermission === 'accept' ? 'accept' : 'set to pending';
-    const actionText = newPermission === 'accept' ? 'Accept' : 'Set to Pending';
+  // Admin can only update permissions of USERS (not admins)
+  if (currentUser.role === 'admin' && target.role !== 'user') {
+    toast.error("Admin can only manage permission for normal users.");
+    return;
+  }
 
-    openDialog({
-      type: newPermission === 'accept' ? 'success' : 'warning',
-      title: `${actionText} User Permission`,
-      message: `Are you sure you want to ${permissionText} ${userToUpdate.firstName} ${userToUpdate.lastName}'s permission?`,
-      confirmText: actionText,
-      cancelText: 'Cancel',
-      actionType: 'updatePermission',
-      userId: userId,
-      userData: { newPermission, user: userToUpdate }
-    });
-  };
+  // Super-admin can update permission for anyone
+
+  openDialog({
+    type: newPermission === 'accept' ? 'success' : 'warning',
+    title: `Change Permission`,
+    message: `Are you sure you want to update ${target.firstName} ${target.lastName}'s permission?`,
+    confirmText: 'Confirm',
+    actionType: 'updatePermission',
+    userId,
+    userData: { newPermission }
+  });
+};
+
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -349,7 +352,7 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-transparent ">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
@@ -471,7 +474,7 @@ const UserManagement = () => {
 
         {/* Users Table */}
         <div className="bg-black/30 backdrop-blur-sm border-white/10 rounded-lg shadow-sm border overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10">
+          <div className="px-4 py-2 border-b border-white/10">
             <h2 className="text-lg font-semibold text-white">
               Users ({filteredUsers.length})
             </h2>
@@ -481,25 +484,25 @@ const UserManagement = () => {
             <table className="min-w-full divide-y divide-white/10">
               <thead className="bg-black/20">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
                   {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Permission
                   </th> */}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Equipment
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Last Login
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -507,9 +510,9 @@ const UserManagement = () => {
               <tbody className="divide-y divide-white/10">
                 {filteredUsers.map((user) => (
                   <tr key={user._id} className="hover:bg-white/5">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
+                        <div className="flex-shrink-0 h-10 w-8">
                           {/* <div className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
                             <span className="text-sm font-medium text-white">
                               {user.firstName.charAt(0)}{user.lastName.charAt(0)}
@@ -518,10 +521,10 @@ const UserManagement = () => {
                           <Avatar fname={user.firstName} lname={user.lastName} />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-white">
+                          <div className="text-xs font-medium text-white">
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-400 flex items-center">
+                          <div className="text-xs text-gray-400 flex items-center">
                             <Mail className="w-3 h-3 mr-1" />
                             {user.email}
                           </div>
@@ -531,7 +534,7 @@ const UserManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-400">
                       <div className="space-y-1">
                         <div className="flex items-center">
                           <Phone className="w-3 h-3 mr-1" />
@@ -543,7 +546,7 @@ const UserManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       {getStatusBadge(user.status)}
                       {!user.isVerified && (
                         <div className="mt-1">
@@ -553,14 +556,14 @@ const UserManagement = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <div className="mt-1">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                           {user.permission === 'pending' ? 'Pending' : user.permission === 'accept' ? 'Accept' : 'null'}
                         </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                    </td> */}
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-400">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         user.hasEquipmentBooked 
                           ? 'bg-blue-100 text-blue-800' 
@@ -569,19 +572,19 @@ const UserManagement = () => {
                         {user.hasEquipmentBooked ? 'Has Equipment' : 'No Equipment'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-400">
                       {user.lastLogin ? user.lastLogin.toLocaleDateString() : 'Never'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        {user.role !== 'admin' && user.status === 'active' ? (
+                        {user.role !== 'super-admin' && user.status === 'active' ? (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'inactive')}
                             className="bg-white/20 text-yellow-400 hover:text-yellow-300 px-2 py-1 rounded hover:bg-white/30 transition-colors"
                           >
                             Suspend
                           </button>
-                        ) : user.role !== 'admin' ? (
+                        ) : user.role !== 'super-admin' ? (
                           <button
                             onClick={() => handleStatusUpdate(user._id, 'active')}
                             className="bg-white/20 text-green-400 hover:text-green-300 px-2 py-1 rounded hover:bg-white/30 transition-colors"
@@ -597,17 +600,17 @@ const UserManagement = () => {
                         <button
                           onClick={() => handleRemoveUser(user._id)}
                           className={`bg-white/20 px-2 py-1 rounded flex items-center transition-colors ${
-                            user.role === 'admin'
+                            user.role === 'super-admin'
                               ? 'text-gray-500 cursor-not-allowed'
                               : 'text-red-400 hover:text-red-300 hover:bg-white/30'
                           }`}
-                          disabled={user.role === 'admin'}
+                          disabled={user.role === 'super-admin'}
                         >
                           <UserX className="w-4 h-4 mr-1" />
                           Remove
                         </button>
 
-                        {user.role !== 'admin' && user.permission === 'pending' ? (
+                        {/* {user.role !== 'admin' && user.permission === 'pending' ? (
                           <button
                             onClick={() => handlePermission(user._id, 'accept')}
                             className="bg-white/20 text-green-400 hover:text-green-300 px-2 py-1 rounded hover:bg-white/30 transition-colors"
@@ -625,7 +628,7 @@ const UserManagement = () => {
                           <button className="bg-white/10 text-gray-500 px-2 py-1 rounded cursor-not-allowed">
                             Pending
                           </button>
-                        )}
+                        )} */}
                       </div>
                     </td>
                   </tr>

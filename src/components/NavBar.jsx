@@ -46,6 +46,8 @@ export default function GeologicalNavbar() {
       ? '/admin-panel'
       : user?.role === 'user'
       ? '/user-dashboard'
+      : user?.role === 'super-admin'
+      ? '/super-admin-panel'
       : '/';
 
   // Better responsive sizing with minimum viable sizes
@@ -227,13 +229,14 @@ export default function GeologicalNavbar() {
                     <span className={`${sizeClasses.userName} ml-2`}>
                       {user?.firstName.trim().split(' ')[0]}
                     </span>
+                    
                   )}
                 </button>
                 
                 {/* User Menu Dropdown */}
                 {isUserMenuOpen && (
                   <div className="absolute mr-1 top-full mt-4 w-48 bg-gradient-to-br
-   							 from-blue-300 via-white to-blue-400 backdrop-blur-md rounded-lg shadow-lg p-4 space-y-2 z-50">
+   							 from-gray-600  to-gray-300 backdrop-blur-md rounded-lg shadow-lg p-4 space-y-2 z-50">
                     <Link
                       to={dashboardRoute}
                       className="block text-black/80 hover:text-emerald-500 px-3 py-2 rounded-lg transition-all duration-300"

@@ -23,8 +23,7 @@ const AllPermissions = () => {
   };
 
   const handleChangePermission = async (user, newPermission) => {
-    if (user.role === "admin") return alert("Cannot change admin permission");
-
+    
     await updatePermission(user._id, newPermission);
     fetchUsers();
   };
@@ -33,19 +32,19 @@ const AllPermissions = () => {
     switch (permission) {
       case "accept":
         return (
-          <span className="flex items-center text-green-400">
+          <span className="flex items-center text-green-400 text-sm">
             <CheckCircle className="w-4 h-4 mr-1" /> Accepted
           </span>
         );
       case "reject":
         return (
-          <span className="flex items-center text-red-400">
+          <span className="flex items-center text-red-400 text-sm">
             <XCircle className="w-4 h-4 mr-1" /> Rejected
           </span>
         );
       default:
         return (
-          <span className="flex items-center text-yellow-400">
+          <span className="flex items-center text-yellow-400 text-sm">
             <AlertCircle className="w-4 h-4 mr-1" /> Pending
           </span>
         );
@@ -57,80 +56,63 @@ const AllPermissions = () => {
   }
 
   return (
-    <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-6">
-      <h2 className="text-xl font-semibold text-white mb-4">
-        All User Permissions
-      </h2>
+    <div className="w-full mx-auto bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-4">
+      <h2 className="text-lg font-semibold text-white mb-3">All User Permissions</h2>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-white/10">
+        <table className="min-w-full divide-y divide-white/10 text-sm">
           <thead className="bg-black/20">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300">
-                User
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300">
-                Permission
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300">
-                Actions
-              </th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">User</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Email</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Permission</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Actions</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-white/10">
-            {users.map((u) => (
-              <tr key={u._id}>
-                <td className="px-6 py-4 text-white">
-                  {u.firstName} {u.lastName}
-                </td>
+            {users
+              .filter((u) => u.role !== "superadmin")
+              .map((u) => (
+                <tr key={u._id}>
+                  <td className="px-3 py-2 text-white">{u.firstName} {u.lastName}</td>
+                  <td className="px-3 py-2 text-white">{u.email}</td>
+                  <td className="px-3 py-2 text-white">{getBadge(u.permission)}</td>
+                  <td className="px-3 py-2 text-white">
+                    {u.permission === "pending" ? (
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleChangePermission(u, "accept")}
+                          className="px-2 py-0.5 bg-green-600/30 text-green-400 rounded text-xs hover:bg-green-600/40"
+                        >
+                          Accept
+                        </button>
 
-                <td className="px-6 py-4 text-white">{u.email}</td>
+                        <button
+                          onClick={() => handleChangePermission(u, "reject")}
+                          className="px-2 py-0.5 bg-red-600/30 text-red-400 rounded text-xs hover:bg-red-600/40"
+                        >
+                          Reject
+                        </button>
 
-                <td className="px-6 py-4 text-white">
-                  {getBadge(u.permission)}
-                </td>
-
-                <td className="px-6 py-4 text-white">
-                  {u.permission === "pending" ? (
-                    <div className="flex items-center space-x-3">
-                      <button
-                        onClick={() => handleChangePermission(u, "accept")}
-                        className="px-3 py-1 bg-green-600/30 text-green-400 rounded hover:bg-green-600/40"
-                      >
-                        Accept
-                      </button>
-
-                      <button
-                        onClick={() => handleChangePermission(u, "reject")}
-                        className="px-3 py-1 bg-red-600/30 text-red-400 rounded hover:bg-red-600/40"
-                      >
-                        Reject
-                      </button>
-
-                      <button
-                        onClick={() => handleChangePermission(u, "pending")}
-                        className="px-3 py-1 bg-yellow-600/30 text-yellow-400 rounded hover:bg-yellow-600/40"
-                      >
-                        Pending
-                      </button>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 italic text-sm">
-                      No actions available
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
+                        <button
+                          onClick={() => handleChangePermission(u, "pending")}
+                          className="px-2 py-0.5 bg-yellow-600/30 text-yellow-400 rounded text-xs hover:bg-yellow-600/40"
+                        >
+                          Pending
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 italic text-xs">No actions available</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
 
-        {users.length === 0 && (
-          <p className="text-gray-400 text-center py-4">No users found</p>
+        {users.filter((u) => u.role !== "superadmin").length === 0 && (
+          <p className="text-gray-400 text-center py-3 text-sm">No users found</p>
         )}
       </div>
     </div>

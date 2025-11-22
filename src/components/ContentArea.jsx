@@ -10,15 +10,13 @@ import StatCard from "./StatCard";
 import EquipmentManagement from "../components/EquipManagement";
 import UserManagement from "../components/UserManagement";
 import BookingManagement from "../components/BookingManagement";
-
 import { Link } from "react-router-dom";
-
 import UserProfile from "./UserProfile";
 import EquipmentBarChart from "./EquipmentBarChart";
 import BookingStatsBarChart from "./BookingStatusChart";
-
 import { useAuthStore } from "../store/authStore";
-
+import TabArea from "./TabArea";
+import Permission from "./Permission";
 const ContentArea = ({ activePath }) => {
   const { allUsers, getAllUsers } = useAuthStore();
 
@@ -40,7 +38,7 @@ const ContentArea = ({ activePath }) => {
       content = (
         <div>
           <h2 className="text-3xl font-bold text-white mb-6">
-            📊 Dashboard Analytics Overview
+            Dashboard Analytics Overview
           </h2>
 
           {/* ================= CHARTS ================= */}
@@ -94,7 +92,7 @@ const ContentArea = ({ activePath }) => {
     case "/users":
       content = (
         <div>
-          <UserManagement />
+          <TabArea />
         </div>
       );
       break;
@@ -127,6 +125,14 @@ const ContentArea = ({ activePath }) => {
       content = (
         <div>
           <EquipmentManagement />
+        </div>
+      );
+      break;
+
+      case "/permission":
+      content = (
+        <div>
+          <Permission />
         </div>
       );
       break;

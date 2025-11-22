@@ -20,6 +20,7 @@ import {
 import useBookingStore from '../store/bookingStore';
 import Avatar from './Avtar';
 import { useAuthStore } from '../store/authStore.jsx';
+import equipmentStore from '../store/equipStore.jsx';
 
 
 const BookingManagement = () => {
@@ -94,11 +95,14 @@ const BookingManagement = () => {
       if(confirmAction.newStatus === "confirmed"){
         const hasEquipmentBooked = true
         await updateUserBookingStatus(selectedBooking.userId, hasEquipmentBooked)
+        await equipmentStore.updateEquipment(selectedBooking.equipmentId, { status: 'booked' })
         
     }
      else if(confirmAction.newStatus === "completed"){
         const hasEquipmentBooked = false
         await updateUserBookingStatus(selectedBooking.userId, hasEquipmentBooked)
+        await equipmentStore.updateEquipment(selectedBooking.equipmentId, { status: 'available' })
+        
         
     }
       if (showDetailsModal) {
