@@ -7,6 +7,9 @@ import PermissionManagement from '../components/PermissionManagement';
 import AllPermissions from '../components/AllPermission';
 import AdminManage from '../components/AdminManage';
 import TabArea from '../components/TabArea';
+import LargeFileUpload from '../components/LargeFileUpload';
+import ProjectList from '../components/ProjectList';
+import ProjectViewer from '../components/ProjectViewer';
 
 
 
@@ -15,13 +18,16 @@ function Settings() {
     <div>
       <NavBar />
       <h1>Settings</h1>
-      <EquipmentBarChart />
+      {/* <EquipmentBarChart />
       <EquipmentPieChart />
       <BookingStatusChart />
       <PermissionManagement />
       <AllPermissions />
       <AdminManage />
-      <TabArea />
+      <TabArea /> */}
+      <LargeFileUpload />
+      <ProjectList />
+      <ProjectViewer />
 
     </div>
   )

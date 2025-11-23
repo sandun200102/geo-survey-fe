@@ -387,7 +387,7 @@ const UserManagement = () => {
 
           {/* Filter Options */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-white/20 text-white">
+            <div className="mt-4 pt-4 border-t border-white/20 text-black">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-white mb-2">
@@ -411,7 +411,7 @@ const UserManagement = () => {
                   <select
                     value={filters.equipmentBooked}
                     onChange={(e) => setFilters({ ...filters, equipmentBooked: e.target.value })}
-                    className="w-full bg-white/10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                    className="w-full bg-white/10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-300"
                   >
                     <option value="all">All Users</option>
                     <option value="booked">Has Equipment Booked</option>

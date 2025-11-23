@@ -5,10 +5,8 @@ import {
   FaUserSlash, 
   FaClipboardCheck 
 } from "react-icons/fa";
-
 import StatCard from "./StatCard";
 import EquipmentManagement from "../components/EquipManagement";
-import UserManagement from "../components/UserManagement";
 import BookingManagement from "../components/BookingManagement";
 import { Link } from "react-router-dom";
 import UserProfile from "./UserProfile";
@@ -17,8 +15,9 @@ import BookingStatsBarChart from "./BookingStatusChart";
 import { useAuthStore } from "../store/authStore";
 import TabArea from "./TabArea";
 import Permission from "./Permission";
+import ProjectManagement from "./ProjctManagement";
 const ContentArea = ({ activePath }) => {
-  const { allUsers, getAllUsers } = useAuthStore();
+  const { allUsers, getAllUsers, user } = useAuthStore();
 
   useEffect(() => {
     getAllUsers();
@@ -100,7 +99,7 @@ const ContentArea = ({ activePath }) => {
     case "/projects":
       content = (
         <div>
-          <h2 className="text-2xl font-semibold">Project Management</h2>
+          <ProjectManagement  userRole={user.role}/>
         </div>
       );
       break;

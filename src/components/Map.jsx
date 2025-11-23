@@ -1,16 +1,48 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from "../store/authStore";
 import 'leaflet/dist/leaflet.css';
-
-const locations = [
-  { id: 1, name: "Colombo", lat: 6.9271, lng: 79.8612 },
-  { id: 2, name: "Kandy", lat: 7.2906, lng: 80.6337 }
-];
+import equipmentStore from '../store/equipStore';
+import projectStore from '../store/projectStore';
+import permissionStore from '../store/permissionStore';
 
 export default function Map() {
   const { user, updatePermission, setAuthUser } = useAuthStore();
+  const [locations, setLocations] = useState([]);
+  const [projId, setProjId] = useState(null);
+  
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projects = await projectStore.fetchProject();
+        console.log("Fetched projects:", projects);
+
+        // Map projects to location format for Leaflet
+        const locs = projects.map(proj => ({
+          id: proj._id,
+          name: proj.projectName,
+          lat: parseFloat(proj.longitude),
+          lng: parseFloat(proj.latitude),
+        }));
+        
+        setLocations(locs);
+      } catch (err) {
+        console.error("Failed to fetch projects:", err);
+      }
+    };
+    
+
+    fetchProjects();
+  }, []);
+
+  const handleMarkerClick = (id) => {
+    console.log("Clicked project ID:", id);
+    setProjId(id); // optional: update state if needed
+  };
+
+  console.log("Locations state:",projId);
 
   const requestPermission = async (locationId) => {
     if (!user) {
@@ -18,13 +50,30 @@ export default function Map() {
       return;
     }
 
+    const generatePermissionId = () => {
+  return Math.floor(100000 + Math.random() * 900000); // 6-digit number
+};
+
     const permissionData = "pending";
     console.log(`Requesting permission for user: ${user._id} at location ID: ${locationId}`);
+    console.log("use Email:",user.email);
+    console.log("Project ID:",projId);
+    console.log("Permission status:", permissionData);
+    console.log("use id:",user._id);
 
-    // Call the API/store update
+    // Update permission
+    
     await updatePermission(user._id, permissionData);
 
-    // Update the local user state to reflect the new permission
+    await permissionStore.createPermission({
+      userId:user._id,
+      permissionId:generatePermissionId(),
+      userEmail:user.email,
+      projectId:projId,
+      permissionStatus:permissionData
+    });
+
+    // Update local state
     setAuthUser({ ...user, permission: permissionData });
   };
 
@@ -51,10 +100,14 @@ export default function Map() {
           attribution='&copy; OpenStreetMap contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
         {locations.map(loc => (
           <Marker
             key={loc.id}
             position={[loc.lat, loc.lng]}
+            eventHandlers={{
+            click: () => handleMarkerClick(loc.id)
+          }}
             icon={L.icon({
               iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
               iconSize: [35, 35],
