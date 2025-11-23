@@ -10,6 +10,7 @@ import TabArea from '../components/TabArea';
 import LargeFileUpload from '../components/LargeFileUpload';
 import ProjectList from '../components/ProjectList';
 import ProjectViewer from '../components/ProjectViewer';
+import ProjectDisplay from '../components/ProjectDisplay';
 
 
 
@@ -25,9 +26,10 @@ function Settings() {
       <AllPermissions />
       <AdminManage />
       <TabArea /> */}
-      <LargeFileUpload />
+      {/* <LargeFileUpload />
       <ProjectList />
-      <ProjectViewer />
+      <ProjectViewer /> */}
+      <ProjectDisplay projectName="qw23" />
 
     </div>
   )

@@ -378,7 +378,7 @@ const UserManagement = () => {
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+              className="flex items-center px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
             >
               <Filter className="w-4 h-4 mr-2" />
               Filters
@@ -396,7 +396,7 @@ const UserManagement = () => {
                   <select
                     value={filters.status}
                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                    className="w-full p-2 border bg-white/10 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                    className="w-full p-2 border bg-white/10 border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-blue"
                   >
                     <option value="all">All Users</option>
                     <option value="active">Active Users</option>
@@ -411,7 +411,7 @@ const UserManagement = () => {
                   <select
                     value={filters.equipmentBooked}
                     onChange={(e) => setFilters({ ...filters, equipmentBooked: e.target.value })}
-                    className="w-full bg-white/10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-300"
+                    className="w-full bg-white/10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-blue"
                   >
                     <option value="all">All Users</option>
                     <option value="booked">Has Equipment Booked</option>

@@ -244,13 +244,13 @@ export default function GeologicalNavbar() {
                     >
                       Profile
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/settings"
                       className="block text-black/80 hover:text-emerald-500 px-3 py-2 rounded-lg transition-all duration-300"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
                       Settings
-                    </Link>
+                    </Link> */}
                     <button
                       className="block w-full text-left text-black/80 hover:text-emerald-500 px-3 py-2 rounded-lg transition-all duration-300"
                       onClick={handleLogout}
@@ -370,7 +370,7 @@ export default function GeologicalNavbar() {
                     Profile
                   </Link>
                   </div>
-                  <div className="pt-4 border-t border-white/20">
+                  {/* <div className="pt-4 border-t border-white/20">
                   <Link
                     to="/settings"
                     className=" text-white/80 font-bold  hover:text-emerald-500 px-3 py-2 rounded-lg transition-all duration-300 flex items-center justify-center relative overflow-hidden"
@@ -378,7 +378,7 @@ export default function GeologicalNavbar() {
                   >
                     Settings
                   </Link>
-                  </div>
+                  </div> */}
                   <button
                     className=" w-full font-bold text-left bg-emerald-900  text-white/80 hover:text-emerald-500 px-3 py-2 rounded-lg transition-all duration-300 flex items-center justify-center relative overflow-hidden"
                     onClick={() => {

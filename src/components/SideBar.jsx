@@ -41,11 +41,11 @@ const SideBar = ({ activePath, onNavigate }) => {
         <div className="flex items-center space-x-3">
           <img 
             className="w-10 h-10 rounded-full object-cover" 
-            src="images\anura.png"
+            src="images\7.webp"
             alt="Anura Kumara" 
           />
           <div>
-            <div className="text-white font-semibold text-sm">Anura Kumara</div>
+            <div className="text-white font-semibold text-sm">Dr. Jagath K. Gunathilake</div>
             <div className="flex items-center text-xs text-green-400">
               <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
               Online
@@ -57,7 +57,7 @@ const SideBar = ({ activePath, onNavigate }) => {
       {/* Main Navigation */}
      {/* Main Navigation */}
       <nav className="p-2 flex-1 overflow-y-auto">
-        <div className="px-2 py-4 text-gray-400 font-semibold text-sm uppercase tracking-wider">
+        <div className="px-2 py-4 text-blue font-semibold text-sm uppercase tracking-wider">
           MAIN MENU
         </div>
 

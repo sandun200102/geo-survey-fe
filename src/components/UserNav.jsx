@@ -53,9 +53,9 @@ const UserNav = () => {
                     </button>
 
                     {/* Profile Dropdown */}
-                    <div className="relative" ref={menuRef}>
+                    <div className="relative right-0" ref={menuRef}>
                         <button 
-                            className="flex items-center space-x-2 p-1 pl-2 rounded-full hover:bg-gray-700/70 group"
+                            className="flex items-center space-x-2 p-1 pl-2 rounded-full hover:bg-gray-700/70 group "
                             onClick={() => setOpenMenu(prev => !prev)}
                         >
                             <Avatar

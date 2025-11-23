@@ -75,15 +75,15 @@ const MultipleFileUpload = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-10 bg-white rounded-2xl shadow-lg border">
-      <h2 className="text-xl font-bold text-center mb-4">
+    <div className="max-w-xl mx-auto p-6 mt-10 bg-black/20 rounded-2xl shadow-lg border">
+      <h2 className="text-xl font-bold text-center mb-4 text-blue-500">
         Upload Files to Project
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* PROJECT NAME */}
-        <div>
+        <div className="text-white">  
           <label className="block font-medium mb-1">Project Name</label>
           <input
             type="text"
@@ -132,8 +132,8 @@ const MultipleFileUpload = () => {
         </div>
 
         {/* FILE INPUT */}
-        <label className="block p-6 border-2 border-dashed rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100">
-          <span className="text-gray-600">Click to select files</span>
+        <label className="block p-6 border-2 border-dashed rounded-xl text-center cursor-pointer bg-gray-600 hover:bg-gray-300">
+          <span className="text-white">Click to select files</span>
           <input type="file" multiple className="hidden" onChange={handleFileChange} />
         </label>
 
@@ -153,7 +153,7 @@ const MultipleFileUpload = () => {
       {/* PROGRESS BAR */}
       {isUploading && (
         <div className="mt-4">
-          <div className="h-3 bg-black/40 rounded-full overflow-hidden">
+          <div className="h-3 bg-white rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-500 transition-all duration-500"
               style={{ width: `${uploadProgress}%` }}

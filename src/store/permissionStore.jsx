@@ -53,7 +53,7 @@ class PermissionStore {
   }
 
   // Upload new Permission
-async createPermission({ userId, permissionId, userEmail, projectId, permissionStatus }) {
+async createPermission({ userId,userName, permissionId, userEmail, projectId, projectName, permissionStatus }) {
   this.setLoading(true);
   this.setError(null);
 
@@ -66,9 +66,11 @@ async createPermission({ userId, permissionId, userEmail, projectId, permissionS
       credentials: 'include',
       body: JSON.stringify({
         userId,
+        userName,
         permissionId,
         userEmail,
         projectId,
+        projectName,
         permissionStatus
       })
     });
@@ -148,7 +150,86 @@ async createPermission({ userId, permissionId, userEmail, projectId, permissionS
   }
 
 
+  // Get permission status by MongoDB _id
+async getPermissionStatus(id) {
+  this.setLoading(true);
+  this.setError(null);
+
+  try {
+    const response = await fetch(`${API_URL}/get-project-permission/${id}`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch permission status");
+    }
+
+    return data; // contains { permissionId, permissionStatus }
+  } catch (error) {
+    this.setError(error.message || "Failed to fetch permission status");
+    throw error;
+  } finally {
+    this.setLoading(false);
+  }
 }
+
+
+async getPermissionProjectName(id) {
+  this.setLoading(true);
+  this.setError(null);
+
+  try {
+    const response = await fetch(`${API_URL}/get-permission-project-name/${id}`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch permission status");
+    }
+
+    return data; // contains { permissionId, permissionStatus }
+  } catch (error) {
+    this.setError(error.message || "Failed to fetch permission status");
+    throw error;
+  } finally {
+    this.setLoading(false);
+  }
+}
+
+async getPermissionUserId(id) {
+  this.setLoading(true);
+  this.setError(null);
+
+  try {
+    const response = await fetch(`${API_URL}/get-permission-user-id/${id}`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch permission status");
+    }
+
+    return data; // contains { permissionId, permissionStatus }
+  } catch (error) {
+    this.setError(error.message || "Failed to fetch permission status");
+    throw error;
+  } finally {
+    this.setLoading(false);
+  }
+}
+
+
+
+
+}
+
+
 
 
 

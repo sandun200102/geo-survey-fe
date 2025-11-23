@@ -5,12 +5,15 @@ import { useAuthStore } from '../store/authStore';
 import Avatar from '../components/Avtar';
 import axios from 'axios';
 import ForgotPassword from '../components/ForgotPassword';
+import useBookingStore from '../store/bookingStore';
 
 
 export default function UserDashBoard() {
   const { user,  setAuthUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [message, setMessage] = useState('');
+  const { userBookings, getBookingsByUserId, loading: bookingLoading } = useBookingStore();
+
 
   // Form fields
   const [firstName, setFirstName] = useState('');
@@ -35,6 +38,13 @@ export default function UserDashBoard() {
       setBio(user.bio || '');
     }
   }, [user]);
+
+  useEffect(() => {
+  if (user?._id) {
+    getBookingsByUserId(user._id);
+  }
+}, [user]);
+
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -100,7 +110,7 @@ export default function UserDashBoard() {
             {[
               { id: 'profile', label: 'Profile Details', icon: User },
               { id: 'bookings', label: 'Bookings', icon: Briefcase },
-              { id: 'activity', label: 'Recent Activity', icon: Activity },
+              // { id: 'activity', label: 'Recent Activity', icon: Activity },
               { id: 'security', label: 'Security', icon: Shield }
             ].map(tab => (
               <button
@@ -218,7 +228,64 @@ export default function UserDashBoard() {
             </form>
           )}
 
-          {activeTab === 'bookings' && <div>Bookings content goes here...</div>}
+          {activeTab === 'bookings' && (
+  <div>
+    <h2 className="text-2xl font-bold text-white mb-6">Your Bookings</h2>
+
+    {bookingLoading && (
+      <div className="flex justify-center py-10">
+        <Loader className="animate-spin w-10 h-10 text-white" />
+      </div>
+    )}
+
+    {!bookingLoading && userBookings.length === 0 && (
+      <p className="text-white/70 text-center py-10">No bookings found.</p>
+    )}
+
+    {/* Booking List */}
+    <div className="space-y-4">
+      {userBookings.map((booking) => (
+        <div
+          key={booking._id}
+          className="bg-white/5 border border-white/10 p-5 rounded-xl flex flex-col md:flex-row justify-between md:items-center"
+        >
+          <div className="space-y-1">
+            <p className="text-white text-lg font-semibold">{booking.equipmentName}</p>
+            <p className="text-white/70 text-sm">
+              From: <span className="text-white">{new Date(booking.startDate).toDateString()}</span>
+            </p>
+            <p className="text-white/70 text-sm">
+              To: <span className="text-white">{new Date(booking.endDate).toDateString()}</span>
+            </p>
+            <p className="text-white/70 text-sm">
+              Status:{" "}
+              <span
+                className={`font-semibold ${
+                  booking.status === "confirmed"
+                    ? "text-green-400"
+                    : booking.status === "pending"
+                    ? "text-yellow-400"
+                    : booking.status === "cancelled"
+                    ? "text-red-400"
+                    : "text-blue-400"
+                }`}
+              >
+                {booking.status}
+              </span>
+            </p>
+          </div>
+
+          <div className="mt-4 md:mt-0">
+            <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg">
+              View Details
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
           {activeTab === 'activity' && <div>Recent activity content goes here...</div>}
           {activeTab === 'security' && <div>
 

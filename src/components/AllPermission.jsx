@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import permissionStore from "../store/permissionStore";
+import { useAuthStore } from "../store/authStore";
 
 const AllPermissions = () => {
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(permissionStore.state.isLoading);
+  const { updatePermission } = useAuthStore();
 
   // Subscribe to store updates
   useEffect(() => {
@@ -23,9 +25,10 @@ const AllPermissions = () => {
   };
 
   const handleChangePermission = async (permissionDoc, newStatus) => {
-    await permissionStore.updatePermission(permissionDoc._id, {
+    await permissionStore.updatePermissionProj(permissionDoc._id, {
       permissionStatus: newStatus,
     });
+    await updatePermission(permissionDoc.userId,  newStatus );
 
     fetchPermissionData();
   };
@@ -68,6 +71,7 @@ const AllPermissions = () => {
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">User</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Email</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Project</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Date</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Permission</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-300">Actions</th>
             </tr>
@@ -76,9 +80,10 @@ const AllPermissions = () => {
           <tbody className="divide-y divide-white/10">
             {permissions.map((p) => (
               <tr key={p._id}>
-                <td className="px-3 py-2 text-white">{p.userName || "Unknown User"}</td>
+                <td className="px-3 py-2 text-white">{p.userName || "Unknown User"} {p.userId}</td>
                 <td className="px-3 py-2 text-white">{p.userEmail}</td>
-                <td className="px-3 py-2 text-white">{p.projectId || "N/A"}</td>
+                <td className="px-3 py-2 text-white">{p.projectName}<br/>{p.projectId || "N/A"}</td>
+                <td className="px-3 py-2 text-white">{p.createdAt || "N/A"}</td>
 
                 <td className="px-3 py-2 text-white">{getBadge(p.permissionStatus)}</td>
 

@@ -90,9 +90,9 @@ export default function Contact() {
                   <div>
                     <h3 className="font-semibold text-white">Address</h3>
                     <p className="text-white/70">
-                      123 Survey Street<br />
-                      Professional Plaza, Suite 200<br />
-                      Cityville, ST 12345
+                      University of Peradeniya<br />
+                      Peradeniya<br />
+                      Kandy
                     </p>
                   </div>
                 </div>
@@ -101,8 +101,8 @@ export default function Contact() {
                   <Phone className="w-6 h-6 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white">Phone</h3>
-                    <p className="text-white/70">(555) 123-4567</p>
-                    <p className="text-white/70 text-sm">Emergency: (555) 987-6543</p>
+                    <p className="text-white/70">0786992914</p>
+                    <p className="text-white/70 text-sm">Emergency: 0786992914</p>
                   </div>
                 </div>
 
@@ -110,7 +110,7 @@ export default function Contact() {
                   <Mail className="w-6 h-6 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-white/70">Email</h3>
-                    <p className="text-white/70">info@geosurvey.com</p>
+                    <p className="text-white/70">geosurveyweb@.com</p>
                     <p className="text-white/70">quotes@geosurvey.com</p>
                   </div>
                 </div>

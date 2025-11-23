@@ -181,6 +181,31 @@ async deleteProject(id) {
   }
 }
 
+  // Get project by ID// Get a single project by ID
+async getProjectById(id) {
+  this.setLoading(true);
+  this.setError(null);
+
+  try {
+    const response = await fetch(`${API_URL}/get-project-by-id/${id}`, {
+      credentials: 'include',
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch project");
+    }
+
+    return data; // <-- return project data to frontend component
+  } catch (error) {
+    this.setError(error.message || "Failed to fetch project");
+    throw error;
+  } finally {
+    this.setLoading(false);
+  }
+}
+
 
 
 }

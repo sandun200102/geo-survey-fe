@@ -99,7 +99,7 @@ const useBookingStore = create((set, get) => ({
   getBookingsByUserId: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`${API_BASE_URL}/get-booking-userid/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/get-booking-user/${userId}`);
       const data = await response.json();
 
       if (!response.ok) {

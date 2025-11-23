@@ -397,7 +397,7 @@ export default function EquipManagement() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-black/30 border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                className="bg-black/10 border-white/20 rounded-lg px-4 py-3 text-black focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
               >
                 <option value="All">All Status</option>
                 <option value="available">Available</option>
