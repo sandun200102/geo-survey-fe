@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Mail, Phone, Calendar, BadgeCheck, Save, User, Briefcase, Activity, Shield ,Lock, Link, ArrowLeft, Loader} from 'lucide-react';
+import { Camera, Mail, Phone, Calendar, BadgeCheck, Save, User, Briefcase, Shield, Loader, X } from 'lucide-react';
 import NavBar from '../components/NavBar';
 import { useAuthStore } from '../store/authStore';
 import Avatar from '../components/Avtar';
@@ -7,13 +7,11 @@ import axios from 'axios';
 import ForgotPassword from '../components/ForgotPassword';
 import useBookingStore from '../store/bookingStore';
 
-
 export default function UserDashBoard() {
-  const { user,  setAuthUser } = useAuthStore();
+  const { user, setAuthUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [message, setMessage] = useState('');
   const { userBookings, getBookingsByUserId, loading: bookingLoading } = useBookingStore();
-
 
   // Form fields
   const [firstName, setFirstName] = useState('');
@@ -24,7 +22,18 @@ export default function UserDashBoard() {
   const [secondaryContactNumber, setSecondaryContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [bio, setBio] = useState('');
-  
+
+  // Modal state
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // User summary
+  const totalBookings = userBookings?.length || 0;
+  const totalDays = userBookings?.reduce((sum, booking) => {
+    const start = new Date(booking.startDate);
+    const end = new Date(booking.endDate);
+    const days = (end - start) / (1000 * 60 * 60 * 24);
+    return sum + days;
+  }, 0) || 0;
 
   useEffect(() => {
     if (user) {
@@ -40,11 +49,10 @@ export default function UserDashBoard() {
   }, [user]);
 
   useEffect(() => {
-  if (user?._id) {
-    getBookingsByUserId(user._id);
-  }
-}, [user]);
-
+    if (user?._id) {
+      getBookingsByUserId(user._id);
+    }
+  }, [user]);
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -69,12 +77,11 @@ export default function UserDashBoard() {
     }
   };
 
-  
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900">
       <NavBar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
         {/* Profile Header */}
         <div className="bg-black/30 backdrop-blur-sm rounded-xl p-8 border border-white/10 mb-8">
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
@@ -84,6 +91,7 @@ export default function UserDashBoard() {
                 <Camera className="w-8 h-8 text-white" />
               </button>
             </div>
+
             <div className="flex-1">
               <div className="flex items-center space-x-4 mb-4">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -97,9 +105,17 @@ export default function UserDashBoard() {
                 <div className="flex items-center"><BadgeCheck className="w-4 h-4 mr-2" />{user.isVerified ? 'Verified' : 'Not Verified'}</div>
               </div>
             </div>
+
+            {/* User Stats */}
             <div className="grid grid-cols-2 gap-6 text-center">
-              <div><p className="text-2xl font-bold text-white">47</p><p className="text-white/60 text-sm">Total Bookings</p></div>
-              <div><p className="text-2xl font-bold text-white">156</p><p className="text-white/60 text-sm">Total Days</p></div>
+              <div>
+                <p className="text-2xl font-bold text-white">{totalBookings}</p>
+                <p className="text-white/60 text-sm">Total Bookings</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{Math.round(totalDays)}</p>
+                <p className="text-white/60 text-sm">Total Days</p>
+              </div>
             </div>
           </div>
         </div>
@@ -110,7 +126,6 @@ export default function UserDashBoard() {
             {[
               { id: 'profile', label: 'Profile Details', icon: User },
               { id: 'bookings', label: 'Bookings', icon: Briefcase },
-              // { id: 'activity', label: 'Recent Activity', icon: Activity },
               { id: 'security', label: 'Security', icon: Shield }
             ].map(tab => (
               <button
@@ -135,7 +150,7 @@ export default function UserDashBoard() {
             <form onSubmit={handleProfileSave} className="space-y-8">
               <h2 className="text-2xl font-bold text-white">Profile Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left Column */}
+                {/* Left */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-white/60 text-sm mb-2">First Name</label>
@@ -175,7 +190,7 @@ export default function UserDashBoard() {
                   </div>
                 </div>
 
-                {/* Right Column */}
+                {/* Right */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-white/60 text-sm mb-2">Last Name</label>
@@ -228,74 +243,115 @@ export default function UserDashBoard() {
             </form>
           )}
 
+          {/* BOOKINGS TAB */}
           {activeTab === 'bookings' && (
-  <div>
-    <h2 className="text-2xl font-bold text-white mb-6">Your Bookings</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-6">Your Bookings</h2>
 
-    {bookingLoading && (
-      <div className="flex justify-center py-10">
-        <Loader className="animate-spin w-10 h-10 text-white" />
-      </div>
-    )}
+              {bookingLoading && (
+                <div className="flex justify-center py-10">
+                  <Loader className="animate-spin w-10 h-10 text-white" />
+                </div>
+              )}
 
-    {!bookingLoading && userBookings.length === 0 && (
-      <p className="text-white/70 text-center py-10">No bookings found.</p>
-    )}
+              {!bookingLoading && userBookings.length === 0 && (
+                <p className="text-white/70 text-center py-10">No bookings found.</p>
+              )}
 
-    {/* Booking List */}
-    <div className="space-y-4">
-      {userBookings.map((booking) => (
-        <div
-          key={booking._id}
-          className="bg-white/5 border border-white/10 p-5 rounded-xl flex flex-col md:flex-row justify-between md:items-center"
-        >
-          <div className="space-y-1">
-            <p className="text-white text-lg font-semibold">{booking.equipmentName}</p>
-            <p className="text-white/70 text-sm">
-              From: <span className="text-white">{new Date(booking.startDate).toDateString()}</span>
-            </p>
-            <p className="text-white/70 text-sm">
-              To: <span className="text-white">{new Date(booking.endDate).toDateString()}</span>
-            </p>
-            <p className="text-white/70 text-sm">
-              Status:{" "}
-              <span
-                className={`font-semibold ${
-                  booking.status === "confirmed"
-                    ? "text-green-400"
-                    : booking.status === "pending"
-                    ? "text-yellow-400"
-                    : booking.status === "cancelled"
-                    ? "text-red-400"
-                    : "text-blue-400"
-                }`}
-              >
-                {booking.status}
-              </span>
-            </p>
-          </div>
+              <div className="space-y-4">
+                {userBookings.map((booking) => (
+                  <div
+                    key={booking._id}
+                    className="bg-white/5 border border-white/10 p-5 rounded-xl flex flex-col md:flex-row justify-between md:items-center"
+                  >
+                    <div className="space-y-1">
+                      <p className="text-white text-lg font-semibold">{booking.equipmentName}</p>
+                      <p className="text-white/70 text-sm">
+                        From: <span className="text-white">{new Date(booking.startDate).toDateString()}</span>
+                      </p>
+                      <p className="text-white/70 text-sm">
+                        To: <span className="text-white">{new Date(booking.endDate).toDateString()}</span>
+                      </p>
+                      <p className="text-white/70 text-sm">
+                        Status:{" "}
+                        <span
+                          className={`font-semibold ${
+                            booking.status === "confirmed"
+                              ? "text-green-400"
+                              : booking.status === "pending"
+                              ? "text-yellow-400"
+                              : booking.status === "cancelled"
+                              ? "text-red-400"
+                              : "text-blue-400"
+                          }`}
+                        >
+                          {booking.status}
+                        </span>
+                      </p>
+                    </div>
 
-          <div className="mt-4 md:mt-0">
-            <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg">
-              View Details
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
-          {activeTab === 'activity' && <div>Recent activity content goes here...</div>}
-          {activeTab === 'security' && <div>
-
-            
-              <div className="flex items-center justify-center">
-              <ForgotPassword />
+                    <div className="mt-4 md:mt-0">
+                      <button
+                        onClick={() => setSelectedBooking(booking)}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-          </div>
-          }
+            </div>
+          )}
+
+          {activeTab === 'security' && (
+            <div className="flex items-center justify-center">
+              <ForgotPassword />
+            </div>
+          )}
         </div>
+
+        {/* ---------------- MODAL ---------------- */}
+        {selectedBooking && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md relative">
+              <button
+                onClick={() => setSelectedBooking(null)}
+                className="absolute top-4 right-4 text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <h2 className="text-xl font-bold text-white mb-4">{selectedBooking.equipmentName}</h2>
+
+              <p className="text-white/80 mb-2">
+                <strong>From:</strong> {new Date(selectedBooking.startDate).toDateString()}
+              </p>
+              <p className="text-white/80 mb-2">
+                <strong>To:</strong> {new Date(selectedBooking.endDate).toDateString()}
+              </p>
+              <p className="text-white/80 mb-2">
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`font-semibold ${
+                    selectedBooking.status === "confirmed"
+                      ? "text-green-400"
+                      : selectedBooking.status === "pending"
+                      ? "text-yellow-400"
+                      : selectedBooking.status === "cancelled"
+                      ? "text-red-400"
+                      : "text-blue-400"
+                  }`}
+                >
+                  {selectedBooking.status}
+                </span>
+              </p>
+              <p className="text-white/80">
+                <strong>Additional Notes:</strong> {selectedBooking.notes || "N/A"}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
