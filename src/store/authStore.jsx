@@ -362,7 +362,7 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
-	sendBookingConfirmedEmail: async (  name, email, equipmentName, startDate,endDate ) => {
+	sendBookingConfirmedEmail: async (  name, email, equipmentName, startDate, endDate ) => {
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.post(`${API_URL}/booking-confirmed-email`, { name, email, equipmentName, startDate,endDate  });
