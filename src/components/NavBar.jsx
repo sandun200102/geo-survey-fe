@@ -164,7 +164,7 @@ export default function GeologicalNavbar() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 group-hover:w-full transition-all duration-300"></span>
             </Link>
             <Link
-              to="/booking"
+              to="http://localhost:5174/"
               className={`text-black/80 hover:text-white ${sizeClasses.padding} ${sizeClasses.navText} font-medium transition-all duration-300 relative group whitespace-nowrap`}
             >
               LMS

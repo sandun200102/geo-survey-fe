@@ -96,6 +96,17 @@ const ContentArea = ({ activePath }) => {
       );
       break;
 
+      case "/lms":
+      content = (
+        <div>
+          <Link to="http://localhost:5174/" className="text-blue-600 underline">
+            Go to LMS
+          </Link>
+        </div>
+      );
+      break;
+
+
     case "/projects":
       content = (
         <div>
