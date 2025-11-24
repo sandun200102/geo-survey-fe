@@ -576,7 +576,7 @@ export default function EquipManagement() {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
                   >
                     <option value="">Select category</option>
                     <option value="Seismic Equipment">Seismic Equipment</option>
@@ -594,7 +594,7 @@ export default function EquipManagement() {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
                   >
                     <option value="">Select status</option>
                     <option value="available">available</option>

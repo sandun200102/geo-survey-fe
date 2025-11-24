@@ -362,15 +362,15 @@ export const useAuthStore = create((set, get) => ({
 		}
 	},
 
-	sendBookingConfirmedEmail: async ( name, email ,phone, startDate, endDate, notes, equipmentId, equipmentName ) => {
+	sendBookingConfirmedEmail: async (  name, email, equipmentName, startDate,endDate ) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}/booking-confirmed-email`, { name, email ,phone, startDate, endDate, notes,equipmentId, equipmentName  });
+			const response = await axios.post(`${API_URL}/booking-confirmed-email`, { name, email, equipmentName, startDate,endDate  });
 			set({ message: response.data.message, isLoading: false });
 		} catch (error) {
 			set({
 				isLoading: false,
-				error: error.response?.data?.message || "Error sending Booking Request email",
+				error: error.response?.data?.message || "Error sending Booking response email",
 			});
 			throw error;
 		}

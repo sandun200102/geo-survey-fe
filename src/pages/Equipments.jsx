@@ -167,7 +167,7 @@ function Equipments() {
                   </div>
                 </div>
               )}
-
+   {/* equipment hire */}
               {modalType === 'hire' && (
                 <div className="">
                   <h2 className="text-3xl font-bold text-gray-800 mb-4">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SideBar from '../components/SideBar';     
+import SideBar2 from '../components/SideBar2';     
 import ContentArea from '../components/ContentArea'; 
 import UserNav from '../components/UserNav';
 
@@ -16,7 +16,7 @@ const AdminPanel = () => {
     <div className="flex min-h-screen bg-gradient-to-r from-green-300 to-white">
       
       {/* 1. Sidebar Component (Fixed) */}
-      <SideBar 
+      <SideBar2 
         activePath={currentPath} 
         onNavigate={handleNavigation} 
       />

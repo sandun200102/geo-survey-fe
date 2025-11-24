@@ -35,7 +35,7 @@ const BookingManagement = () => {
     getBookingsByStatus,
     clearError
   } = useBookingStore();
-    const { updateUserBookingStatus} = useAuthStore();
+    const { updateUserBookingStatus, sendBookingConfirmedEmail} = useAuthStore();
   
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -96,6 +96,7 @@ const BookingManagement = () => {
         const hasEquipmentBooked = true
         await updateUserBookingStatus(selectedBooking.userId, hasEquipmentBooked)
         await equipmentStore.updateEquipment(selectedBooking.equipmentId, { status: 'booked' })
+        await sendBookingConfirmedEmail(selectedBooking.userName, selectedBooking.userEmail, selectedBooking.equipmentname, selectedBooking.startDate, selectedBooking.endDate)
         
     }
      else if(confirmAction.newStatus === "completed"){
